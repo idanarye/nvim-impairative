@@ -15,4 +15,14 @@ function M.toggling(opts)
     })
 end
 
+---@param opts ImpairativeOperationsOptions
+---@return ImpairativeOperations
+function M.operations(opts)
+    return setmetatable({
+        _opts = opts,
+    }, {
+        __index = require'impairative.operations',
+    })
+end
+
 return M
