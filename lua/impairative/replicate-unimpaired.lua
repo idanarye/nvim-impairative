@@ -168,4 +168,23 @@ return function()
             end
         end,
     }
+    :unified_function {
+        key = '<Space>',
+        desc = 'add blank line(s) {above|below} the current line',
+        fun = function(direction)
+            local line_number = vim.api.nvim_win_get_cursor(0)[1]
+            if direction == 'backward' then
+                line_number = line_number - 1
+            end
+            local lines = {}
+            if vim.v.count == 0 then
+                lines[1] = ''
+            else
+                for i = 1, vim.v.count do
+                    lines[i] = ''
+                end
+            end
+            vim.api.nvim_buf_set_lines(0, line_number, line_number, true, lines)
+        end,
+    }
 end
