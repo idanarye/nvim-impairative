@@ -84,7 +84,6 @@ return function()
     }
 
     impairative.operations {
-        -- Use capital O for now to avoid conflicts
         backward = '[',
         forward = ']',
     }

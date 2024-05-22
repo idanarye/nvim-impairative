@@ -24,7 +24,6 @@ end
 
 ---@class ImpairativeOperationsCommandPairArgs
 ---@field key string
----@field name string?
 ---@field backward string
 ---@field forward string
 local ImpairativeOperationsCommandPairArgs
@@ -32,16 +31,9 @@ local ImpairativeOperationsCommandPairArgs
 ---@param args ImpairativeOperationsCommandPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:command_pair(args)
-    return self:function_pair {
-        key = args.key,
-        name = args.name,
-        backward = function()
-            vim.cmd(args.backward)
-        end,
-        forward = function()
-            vim.cmd(args.forward)
-        end,
-    }
+    vim.keymap.set('n', self._opts.backward .. args.key, '<Cmd>' .. args.backward .. '<Cr>')
+    vim.keymap.set('n', self._opts.forward .. args.key, '<Cmd>' .. args.forward .. '<Cr>')
+    return self
 end
 
 local function keybind_text_manipulation_function(keys, func)
