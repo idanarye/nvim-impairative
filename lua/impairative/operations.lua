@@ -22,6 +22,20 @@ function ImpairativeOperations:function_pair(args)
     return self
 end
 
+---@class ImpairativeOperationsUnifiedFunctionArgs
+---@field key string
+---@field name string?
+---@field fun fun(direction: 'backward'|'forward')
+local ImpairativeOperationsUnifiedFunctionArgs
+
+---@param args ImpairativeOperationsUnifiedFunctionArgs
+---@return ImpairativeOperations
+function ImpairativeOperations:unified_function(args)
+    vim.keymap.set('n', self._opts.backward .. args.key, function() return args.fun('backward') end)
+    vim.keymap.set('n', self._opts.forward .. args.key, function() return args.fun('forward') end)
+    return self
+end
+
 ---@class ImpairativeOperationsCommandPairArgs
 ---@field key string
 ---@field backward string

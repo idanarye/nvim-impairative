@@ -152,4 +152,19 @@ return function()
         backward = 'ptprevious',
         forward = 'ptnext',
     }
+    :unified_function {
+        key = 'f',
+        fun = function(direction)
+            local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
+            local path
+            if vim.v.count == 0 then
+                path = it:next()
+            else
+                path = it:nth(vim.v.count)
+            end
+            if path then
+                require'impairative.util'.jump_to{filename = path}
+            end
+        end,
+    }
 end
