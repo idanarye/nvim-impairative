@@ -158,11 +158,7 @@ return function()
         fun = function(direction)
             local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
             local path
-            if vim.v.count == 0 then
-                path = it:next()
-            else
-                path = it:nth(vim.v.count)
-            end
+            path = it:nth(math.max(1, vim.v.count))
             if path then
                 require'impairative.util'.jump_to{filename = path}
             end
@@ -176,14 +172,7 @@ return function()
             if direction == 'backward' then
                 line_number = line_number - 1
             end
-            local lines = {}
-            if vim.v.count == 0 then
-                lines[1] = ''
-            else
-                for i = 1, vim.v.count do
-                    lines[i] = ''
-                end
-            end
+            local lines = vim.fn['repeat']({'-'}, math.max(1, vim.v.count))
             vim.api.nvim_buf_set_lines(0, line_number, line_number, true, lines)
         end,
     }
