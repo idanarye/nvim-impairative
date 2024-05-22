@@ -6,19 +6,18 @@ return function()
         disable = ']o',
         toggle = 'yo',
     }
-    :field {
+    :option {
         key = 'b',
-        table = vim.o,
-        field = 'background',
+        option = 'background',
         values = { [true] = 'light', [false] = 'dark' }
     }
-    :field {
+    :option {
         key = 'c',
-        table = vim.o,
-        field = 'cursorline',
+        option = 'cursorline',
     }
     :getter_setter {
         key = 'd',
+        name = 'diff mode',
         get = function()
             return vim.o.diff
         end,
@@ -30,60 +29,51 @@ return function()
             end
         end,
     }
-    :field {
+    :option {
         key = 'h',
-        table = vim.o,
-        field = 'hlsearch',
+        option = 'hlsearch',
     }
-    :field {
+    :option {
         key = 'i',
-        table = vim.o,
-        field = 'ignorecase',
+        option = 'ignorecase',
     }
-    :field {
+    :option {
         key = 'l',
-        table = vim.o,
-        field = 'list',
+        option = 'list',
     }
-    :field {
+    :option {
         key = 'n',
-        table = vim.o,
-        field = 'number',
+        option = 'number',
     }
-    :field {
+    :option {
         key = 'r',
-        table = vim.o,
-        field = 'relativenumber',
+        option = 'relativenumber',
     }
-    :field {
+    :option {
         key = 's',
-        table = vim.o,
-        field = 'spell',
+        option = 'spell',
     }
-    :field {
+    :option {
         key = 't',
-        table = vim.o,
-        field = 'colorcolumn',
+        option = 'colorcolumn',
         values = { [true] = '+1', [false] = '' }
     }
-    :field {
+    :option {
         key = 'u',
-        table = vim.o,
-        field = 'cursorcolumn',
+        option = 'cursorcolumn',
     }
-    :field {
+    :option {
         key = 'v',
-        table = vim.o,
-        field = 'virtualedit',
+        option = 'virtualedit',
         values = { [true] = 'all', [false] = '' }
     }
-    :field {
+    :option {
         key = 'w',
-        table = vim.o,
-        field = 'wrap',
+        option = 'wrap',
     }
     :getter_setter {
         key = 'x',
+        name = "Vim's 'cursorline' and 'cursorcolumn' options both",
         get = function()
             return vim.o.cursorline and vim.o.cursorcolumn
         end,
