@@ -18,7 +18,7 @@ local ImpairativeTogglingGetterSetterArgs
 ---@param args ImpairativeTogglingGetterSetterArgs
 ---@return ImpairativeToggling
 function ImpairativeToggling:getter_setter(args)
-    local function descr(fmt)
+    local function gen_opts(fmt)
         if args.name then
             return {
                 desc = fmt:format(args.name),
@@ -28,13 +28,13 @@ function ImpairativeToggling:getter_setter(args)
 
     vim.keymap.set('n', self._opts.toggle .. args.key, function()
         args.set(not args.get())
-    end, descr('toggle %s'))
+    end, gen_opts('toggle %s'))
     vim.keymap.set('n', self._opts.enable .. args.key, function()
         args.set(true)
-    end, descr('enable %s'))
+    end, gen_opts('enable %s'))
     vim.keymap.set('n', self._opts.disable .. args.key, function()
         args.set(false)
-    end, descr('disable %s'))
+    end, gen_opts('disable %s'))
     return self
 end
 

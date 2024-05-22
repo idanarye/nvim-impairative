@@ -9,7 +9,7 @@ local ImpairativeOperations = {}
 
 ---@class ImpairativeOperationsFunctionPairArgs
 ---@field key string
----@field name string?
+---@field desc? string
 ---@field backward fun()
 ---@field forward fun()
 local ImpairativeOperationsFunctionPairArgs
@@ -17,23 +17,42 @@ local ImpairativeOperationsFunctionPairArgs
 ---@param args ImpairativeOperationsFunctionPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:function_pair(args)
-    vim.keymap.set('n', self._opts.backward .. args.key, args.backward)
-    vim.keymap.set('n', self._opts.forward .. args.key, args.forward)
+    local function gen_opts(i)
+        if args.desc then
+            return {
+                desc = args.desc:gsub("{(.-)}", function(m)
+                    local parts = vim.split(m, '|', {plain = true})
+                    if #parts == 2 then
+                        return parts[i]
+                    end
+                end),
+            }
+        end
+    end
+    vim.keymap.set('n', self._opts.backward .. args.key, args.backward, gen_opts(1))
+    vim.keymap.set('n', self._opts.forward .. args.key, args.forward, gen_opts(2))
     return self
 end
 
 ---@class ImpairativeOperationsUnifiedFunctionArgs
 ---@field key string
----@field name string?
+---@field desc? string
 ---@field fun fun(direction: 'backward'|'forward')
 local ImpairativeOperationsUnifiedFunctionArgs
 
 ---@param args ImpairativeOperationsUnifiedFunctionArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:unified_function(args)
-    vim.keymap.set('n', self._opts.backward .. args.key, function() return args.fun('backward') end)
-    vim.keymap.set('n', self._opts.forward .. args.key, function() return args.fun('forward') end)
-    return self
+    return self:function_pair {
+        key = args.key,
+        desc = args.desc,
+        backward = function()
+            return args.fun('backward')
+        end,
+        forward = function()
+            return args.fun('forward')
+        end,
+    }
 end
 
 ---@class ImpairativeOperationsCommandPairArgs

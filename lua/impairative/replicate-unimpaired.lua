@@ -154,6 +154,7 @@ return function()
     }
     :unified_function {
         key = 'f',
+        desc = 'jump to the {previous|next} file in the directory tree',
         fun = function(direction)
             local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
             local path
