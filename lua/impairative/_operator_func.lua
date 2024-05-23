@@ -4,6 +4,11 @@ function M.operatorfunc(range_type)
     local region_start = vim.fn.getpos("'[")
     local region_end = vim.fn.getpos("']")
 
+    M.action_on_range(range_type, region_start, region_end)
+    if true then
+        return
+    end
+
     if range_type == 'char' then
         local orig_lines = vim.api.nvim_buf_get_text(
             region_start[1],
@@ -59,6 +64,13 @@ function M.operatorfunc(range_type)
     else
         error("Unsupported range type " .. vim.inspect(range_type))
     end
+end
+
+---@param range_type string
+---@param range_start integer[]
+---@param range_end integer[]
+function M.action_on_range(range_type, range_start, range_end)
+    error("`require'impairative._operator_func'.action_on_range` was not set")
 end
 
 ---@param _ string

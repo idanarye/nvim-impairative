@@ -176,4 +176,22 @@ return function()
             vim.api.nvim_buf_set_lines(0, line_number, line_number, true, lines)
         end,
     }
+    :range_manipulation {
+        key = 'e',
+        line_key = true,
+        desc = 'exchange the line(s) with [count] lines {above|below} it',
+        fun = function(args)
+            local target
+            if args.direction == 'backward' then
+                target = args.start_line - math.max(1, args.count) - 1
+            else
+                target = args.end_line + math.max(1, args.count)
+            end
+            vim.cmd {
+                cmd = 'move',
+                range = {args.start_line, args.end_line},
+                args = {target},
+            }
+        end,
+    }
 end
