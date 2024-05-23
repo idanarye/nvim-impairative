@@ -201,4 +201,11 @@ return function()
         backward = require'impairative.helpers'.encode_url,
         forward = require'impairative.helpers'.decode_url,
     }
+    :text_manipulation {
+        key = 'x',
+        line_key = true,
+        desc = '{encode|decode} XML',
+        backward = require'impairative.helpers'.encode_xml,
+        forward = require'impairative.helpers'.decode_xml,
+    }
 end

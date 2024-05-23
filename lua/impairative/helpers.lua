@@ -109,4 +109,30 @@ function M.decode_url(text)
     return vim.iconv(text, 'utf-8', 'latin1')
 end
 
+function M.encode_xml(text)
+    local mapping = {
+        ['<'] = '&lt;',
+        ['>'] = '&gt;',
+        ['&']  = '&amp;',
+        ['\''] = '&apos;',
+        ['"'] = '&quot;',
+    }
+    return text:gsub([=[[<>&'"]]=], function(m)
+        return mapping[m]
+    end)
+end
+
+function M.decode_xml(text)
+    local mapping = {
+        ['lt'] = '<',
+        ['gt'] = '>',
+        ['amp']  = '&',
+        ['apos'] = '\'',
+        ['quot'] = '"',
+    }
+    return text:gsub([=[&(%a-);]=], function(m)
+        return mapping[m]
+    end)
+end
+
 return M
