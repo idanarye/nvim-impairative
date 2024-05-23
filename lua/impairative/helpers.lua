@@ -50,7 +50,6 @@ function M.walk_files_tree(start_from, backwards)
     end
 
     local stack = {}
-    -- start_from = vim.fn.fnamemodify(start_from, ':p')
     for path in vim.fs.parents(start_from) do
         table.insert(stack, path)
     end
@@ -87,6 +86,27 @@ function M.walk_files_tree(start_from, backwards)
             end
         end
     end)
+end
+
+function M.encode_url(text)
+    -- Ported from unimpaired: iconv trick to convert utf-8 bytes to 8bits indiviual char:
+    text = vim.iconv(text, 'latin1', 'utf-8')
+    return text:gsub([=[[^A-Za-z0-9_.~-]]=], function(m)
+        if m == ' ' then
+            return '+'
+        else
+            return ('%%%02X'):format(m:byte())
+        end
+    end)
+end
+
+function M.decode_url(text)
+    -- Ported from unimpaired
+    text = text:gsub('+', ' ')
+    text = text:gsub([=[%%(%x%x)]=], function(m)
+        return string.char(tonumber(m, 16))
+    end)
+    return vim.iconv(text, 'utf-8', 'latin1')
 end
 
 return M

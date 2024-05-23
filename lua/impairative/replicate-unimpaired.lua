@@ -194,10 +194,10 @@ return function()
             }
         end,
     }
-    -- :text_manipulation {
-        -- key = 'u',
-        -- line_key = true,
-        -- backward = ,
-        -- forward = ,
-    -- }
+    :text_manipulation {
+        key = 'u',
+        line_key = true,
+        backward = require'impairative.helpers'.encode_url,
+        forward = require'impairative.helpers'.decode_url,
+    }
 end
