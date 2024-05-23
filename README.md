@@ -23,6 +23,13 @@ require'impairative'.setup {
 ALTERNATIVES
 ============
 
+DIFFERENCE FROM UNIMPAIRED
+==========================
+
+* unimpaired's normal mode version of `[e` and `]e` work on the current line. In Impairative, they are operators.
+* unimpaired's URL encoding encode spaces a `%20`. Impairative encodes them as `+`.
+* Impairative does not implement unimpaired's paste-related keymaps, because in Neovim the `'paste'` option is obsolete.
+
 CONTRIBUTION GUIDELINES
 =======================
 
