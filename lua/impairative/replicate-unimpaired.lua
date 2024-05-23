@@ -172,7 +172,7 @@ return function()
             if direction == 'backward' then
                 line_number = line_number - 1
             end
-            local lines = vim.fn['repeat']({'-'}, math.max(1, vim.v.count))
+            local lines = vim.fn['repeat']({''}, math.max(1, vim.v.count))
             vim.api.nvim_buf_set_lines(0, line_number, line_number, true, lines)
         end,
     }
