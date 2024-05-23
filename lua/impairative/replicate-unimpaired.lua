@@ -194,4 +194,10 @@ return function()
             }
         end,
     }
+    -- :text_manipulation {
+        -- key = 'u',
+        -- line_key = true,
+        -- backward = ,
+        -- forward = ,
+    -- }
 end

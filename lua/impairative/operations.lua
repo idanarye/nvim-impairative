@@ -97,7 +97,10 @@ function ImpairativeOperations:range_manipulation(args)
     for _, direction in ipairs{'backward', 'forward'} do
         local function set_operator_func()
             local count = vim.v.count
-            local function func(range_type, region_start, region_end)
+            require'impairative._operator_func'.operatorfunc = function(range_type)
+                local region_start = vim.fn.getpos("'[")
+                local region_end = vim.fn.getpos("']")
+
                 args.fun {
                     direction = direction,
                     count = count,
@@ -108,7 +111,6 @@ function ImpairativeOperations:range_manipulation(args)
                     end_col = region_end[3],
                 }
             end
-            require'impairative._operator_func'.action_on_range = func
             vim.o.operatorfunc = "v:lua.require'impairative._operator_func'.operatorfunc"
         end
         vim.keymap.set({'n', 'x'}, self._opts[direction] .. args.key, function()
@@ -125,26 +127,44 @@ function ImpairativeOperations:range_manipulation(args)
     return self
 end
 
--- local function keybind_text_manipulation_function(keys, func)
-    -- vim.keymap.set({'n', 'x'}, keys, function()
-        -- require'impairative._operator_func'.change_text = func
-        -- vim.o.operatorfunc = "v:lua.require'impairative._operator_func'.operatorfunc"
-        -- vim.api.nvim_feedkeys('g@', 'ni', false)
-    -- end)
--- end
+---@class ImpairativeOperationsTextManipulationArgs
+---@field key string
+---@field line_key? string|boolean
+---@field desc? string
+---@field backward fun(orig: string): string
+---@field forward fun(orig: string): string
+local ImpairativeOperationsTextManipulationArgs
 
--- ---@class ImpairativeOperationsTextManipulationArgs
--- ---@field key string
--- ---@field backward fun(orig: string): string
--- ---@field forward fun(orig: string): string
--- local ImpairativeOperationsTextManipulationArgs
+---@param args ImpairativeOperationsTextManipulationArgs
+---@return ImpairativeOperations
+function ImpairativeOperations:text_manipulation(args)
+    return self:range_manipulation {
+        key = args.key,
+        line_key = args.key,
+        desc = args.desc,
+        fun = function(op)
+            local function change_lines(orig_lines)
+                local orig_text = table.concat(orig_lines, '\n')
+                local new_text = args[op.direction](orig_text)
+                return vim.split(new_text, '\n', {plain = true})
+            end
 
--- ---@param args ImpairativeOperationsTextManipulationArgs
--- ---@return ImpairativeOperations
--- function ImpairativeOperations:text_manipulation(args)
-    -- keybind_text_manipulation_function(self._opts.backward .. args.key, args.backward)
-    -- keybind_text_manipulation_function(self._opts.forward .. args.key, args.forward)
-    -- return self
--- end
+            if op.range_type == 'char' then
+                local orig_lines = vim.api.nvim_buf_get_text(0, op.start_line - 1, op.start_col - 1, op.end_line - 1, op.end_col, {})
+                vim.api.nvim_buf_set_text(0, op.start_line - 1, op.start_col - 1, op.end_line - 1, op.end_col, change_lines(orig_lines))
+            elseif op.range_type == 'line' then
+                local orig_lines = vim.api.nvim_buf_get_lines(0, op.start_line - 1, op.end_line, true)
+                vim.api.nvim_buf_set_lines(0, op.start_line - 1, op.end_line, true, change_lines(orig_lines))
+            elseif op.range_type == 'block' then
+                for line = op.end_line, op.start_line, -1 do
+                    local orig_lines = vim.api.nvim_buf_get_text(0, line - 1, op.start_col - 1, line - 1, op.end_col, {})
+                    vim.api.nvim_buf_set_text(0, line - 1, op.start_col - 1, line - 1, op.end_col, change_lines(orig_lines))
+                end
+            else
+                error("Unsupported range type " .. vim.inspect(op.range_type))
+            end
+        end,
+    }
+end
 
 return ImpairativeOperations
