@@ -137,6 +137,7 @@ end
 
 function M.encode_string(text)
     local mapping = {
+        [' '] = ' ',
         ['\n'] = '\\n',
         ['\r'] = '\\r',
         ['\t'] = '\\t',
@@ -151,7 +152,81 @@ function M.encode_string(text)
 end
 
 function M.decode_string(text)
-    error('Not yet implemented')
+    local it = vim.gsplit(text, [=[\]=])
+    local parts = table.pack(it())
+
+    local function add(part)
+        if part then
+            parts.n = parts.n + 1
+            parts[parts.n] = part
+        end
+    end
+
+    local mapping = {
+        ['a'] = '\a',
+        ['b'] = '\b',
+        ['f'] = '\f',
+        ['n'] = '\n',
+        ['r'] = '\r',
+        ['t'] = '\t',
+        ['v'] = '\v',
+        ['"'] = '"',
+        ['\''] = '\'',
+        ['?'] = '?',
+        [''] = function()
+            add('\\')
+            add(it())
+        end,
+        ['u'] = function(part)
+            local hex = part:sub(1, 4)
+            if #hex == 4 then
+                local codepoint = tonumber(hex, 16)
+                if codepoint then
+                    add(vim.fn.nr2char(codepoint))
+                    add(part:sub(5))
+                    return
+                end
+            end
+            add('\\u')
+            add(part)
+        end,
+        ['U'] = function(part)
+            local hex = part:sub(1, 8)
+            if #hex == 8 then
+                local codepoint = tonumber(hex, 16)
+                if codepoint then
+                    add(vim.fn.nr2char(codepoint))
+                    add(part:sub(9))
+                    return
+                end
+            end
+            add('\\u')
+            add(part)
+        end,
+    }
+
+    for part in it do
+        local indicator = part:sub(1, 1)
+        local mapped_to = mapping[indicator]
+        if type(mapped_to) == 'string' then
+            add(mapped_to)
+            add(part:sub(2))
+        elseif mapped_to then -- is a function
+            mapped_to(part:sub(2))
+        else
+            local octal = part:match([=[^[0-7]*]=]):sub(1, 3)
+            local octal_len = #octal
+            if 0 < octal_len then
+                add(string.char(tonumber(octal, 8)))
+                add(part:sub(octal_len + 1))
+            else
+                -- Will add the "escape" sequence as is
+                add('\\')
+                add(part)
+            end
+        end
+    end
+    return table.concat(parts)
 end
 
 return M

@@ -3,13 +3,6 @@
 INTRODUCTION
 ============
 
-FEATURES (IMPLEMENTED/PLANNED)
-==============================
-
-* [x] Determining the last time the configuration was changed.
-* [x] Exposing that information for other plugins (e.g. custom splash screens) to use.
-* [x] Displaying a billboard (using a floating window) with that information.
-
 SETUP
 =====
 
@@ -28,7 +21,9 @@ DIFFERENCE FROM UNIMPAIRED
 
 * unimpaired's normal mode version of `[e` and `]e` work on the current line. In Impairative, they are operators.
 * unimpaired's URL encoding encode spaces a `%20`. Impairative encodes them as `+`.
+* Impairative's C string decoder (`]y` / `]C`) knows how to decode 32bit Unicode codepoints (the ones that start with `\U`)
 * Impairative does not implement unimpaired's paste-related keymaps, because in Neovim the `'paste'` option is obsolete.
+
 
 CONTRIBUTION GUIDELINES
 =======================
