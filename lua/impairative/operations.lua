@@ -14,23 +14,22 @@ local ImpairativeOperations = {}
 ---@field forward fun()
 local ImpairativeOperationsFunctionPairArgs
 
+local function process_desc(desc, i)
+    if desc then
+        return desc:gsub("{(.-)}", function(m)
+            local parts = vim.split(m, '|', {plain = true})
+            if #parts == 2 then
+                return parts[i]
+            end
+        end)
+    end
+end
+
 ---@param args ImpairativeOperationsFunctionPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:function_pair(args)
-    local function gen_opts(i)
-        if args.desc then
-            return {
-                desc = args.desc:gsub("{(.-)}", function(m)
-                    local parts = vim.split(m, '|', {plain = true})
-                    if #parts == 2 then
-                        return parts[i]
-                    end
-                end),
-            }
-        end
-    end
-    vim.keymap.set('n', self._opts.backward .. args.key, args.backward, gen_opts(1))
-    vim.keymap.set('n', self._opts.forward .. args.key, args.forward, gen_opts(2))
+    vim.keymap.set('n', self._opts.backward .. args.key, args.backward, {desc = process_desc(args.desc, 1)})
+    vim.keymap.set('n', self._opts.forward .. args.key, args.forward, {desc = process_desc(args.desc, 2)})
     return self
 end
 
@@ -94,7 +93,7 @@ function ImpairativeOperations:range_manipulation(args)
     elseif args.line_key then
         line_key = args.line_key
     end
-    for _, direction in ipairs{'backward', 'forward'} do
+    for i, direction in ipairs{'backward', 'forward'} do
         local function set_operator_func()
             local count = vim.v.count
             require'impairative._operator_func'.operatorfunc = function(range_type)
@@ -113,15 +112,16 @@ function ImpairativeOperations:range_manipulation(args)
             end
             vim.o.operatorfunc = "v:lua.require'impairative._operator_func'.operatorfunc"
         end
+        local desc = process_desc(args.desc, i)
         vim.keymap.set({'n', 'x'}, self._opts[direction] .. args.key, function()
             set_operator_func()
             vim.api.nvim_feedkeys('g@', 'ni', false)
-        end)
+        end, {desc = desc})
         if line_key then
             vim.keymap.set('n', self._opts[direction] .. args.key .. line_key, function()
                 set_operator_func()
                 vim.api.nvim_feedkeys('Vg@', 'ni', false)
-            end)
+            end, {desc = desc})
         end
     end
     return self

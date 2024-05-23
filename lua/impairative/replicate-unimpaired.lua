@@ -197,6 +197,7 @@ return function()
     :text_manipulation {
         key = 'u',
         line_key = true,
+        desc = '{encode|decode} URL',
         backward = require'impairative.helpers'.encode_url,
         forward = require'impairative.helpers'.decode_url,
     }
