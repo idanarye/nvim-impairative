@@ -135,4 +135,23 @@ function M.decode_xml(text)
     end)
 end
 
+function M.encode_string(text)
+    local mapping = {
+        ['\n'] = '\\n',
+        ['\r'] = '\\r',
+        ['\t'] = '\\t',
+        ['\b'] = '\\b',
+        ['\f'] = '\\f',
+        ['"'] = '\\"',
+        ['\\'] = '\\\\',
+    }
+    return text:gsub([=[[%G"\]]=], function(m)
+        return mapping[m] or ('\\%03o'):format(m:byte())
+    end)
+end
+
+function M.decode_string(text)
+    error('Not yet implemented')
+end
+
 return M

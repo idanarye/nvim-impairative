@@ -208,4 +208,11 @@ return function()
         backward = require'impairative.helpers'.encode_xml,
         forward = require'impairative.helpers'.decode_xml,
     }
+    :text_manipulation {
+        key = 'Y',
+        line_key = true,
+        desc = '{escape|unescape} strings (C escape rules)',
+        backward = require'impairative.helpers'.encode_string,
+        forward = require'impairative.helpers'.decode_string,
+    }
 end
