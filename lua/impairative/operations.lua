@@ -75,12 +75,12 @@ function ImpairativeOperations:jump_in_buf(args)
                 break
             end
             prevs[prevs.i] = pos
-            prevs.i = (prevs.i + 1) % math.max(1, vim.v.count)
+            prevs.i = (prevs.i + 1) % vim.v.count1
         end
         if prevs[0] == nil then
             return
         end
-        if prevs[math.max(1, vim.v.count) - 1] == nil then
+        if prevs[vim.v.count1 - 1] == nil then
             vim.api.nvim_win_set_cursor(0, {prevs[0].end_line, prevs[0].end_col - 1})
         else
             vim.api.nvim_win_set_cursor(0, {prevs[prevs.i].end_line, prevs[prevs.i].end_col - 1})
@@ -99,7 +99,7 @@ function ImpairativeOperations:jump_in_buf(args)
                 return false
             end
         end)
-        :nth(math.max(1, vim.v.count))
+        :nth(vim.v.count1)
         if pos then
             vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
         end
@@ -124,6 +124,7 @@ end
 ---@class ImpairativeRangeOp
 ---@field direction 'backward'|'forward'
 ---@field count integer
+---@field count1 integer
 ---@field range_type string
 ---@field start_line integer
 ---@field end_line integer
@@ -149,6 +150,7 @@ function ImpairativeOperations:range_manipulation(args)
     for i, direction in ipairs{'backward', 'forward'} do
         local function set_operator_func()
             local count = vim.v.count
+            local count1 = vim.v.count1
             require'impairative._operator_func'.operatorfunc = function(range_type)
                 local region_start = vim.fn.getpos("'[")
                 local region_end = vim.fn.getpos("']")
@@ -156,6 +158,7 @@ function ImpairativeOperations:range_manipulation(args)
                 args.fun {
                     direction = direction,
                     count = count,
+                    count1 = count1,
                     range_type = range_type,
                     start_line = region_start[2],
                     start_col = region_start[3],

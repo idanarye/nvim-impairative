@@ -165,7 +165,6 @@ return function()
                     else
                         cmd = 'lnewer'
                     end
-                        -- vim.cmd.lolder(math.max(1, vim.v.count))
                 else
                     if direction == 'backward' then
                         cmd = 'colder'
@@ -175,7 +174,7 @@ return function()
                 end
                 local ok, err = pcall(vim.cmd, {
                     cmd = cmd,
-                    count = math.max(1, vim.v.count),
+                    count = vim.v.count1,
                 })
                 if not ok then
                     vim.api.nvim_err_writeln(err)
@@ -183,7 +182,7 @@ return function()
             else
                 local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
                 local path
-                path = it:nth(math.max(1, vim.v.count))
+                path = it:nth(vim.v.count1)
                 if path then
                     require'impairative.util'.jump_to{filename = path}
                 end
@@ -203,7 +202,7 @@ return function()
             if direction == 'backward' then
                 line_number = line_number - 1
             end
-            local lines = vim.fn['repeat']({''}, math.max(1, vim.v.count))
+            local lines = vim.fn['repeat']({''}, vim.v.count1)
             vim.api.nvim_buf_set_lines(0, line_number, line_number, true, lines)
         end,
     }
@@ -214,9 +213,9 @@ return function()
         fun = function(args)
             local target
             if args.direction == 'backward' then
-                target = args.start_line - math.max(1, args.count) - 1
+                target = args.start_line - args.count1 - 1
             else
-                target = args.end_line + math.max(1, args.count)
+                target = args.end_line + args.count1
             end
             vim.cmd {
                 cmd = 'move',
