@@ -156,11 +156,37 @@ return function()
         key = 'f',
         desc = 'jump to the {previous|next} file in the directory tree',
         fun = function(direction)
-            local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
-            local path
-            path = it:nth(math.max(1, vim.v.count))
-            if path then
-                require'impairative.util'.jump_to{filename = path}
+            local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1] or {}
+            if win_info.quickfix == 1 then
+                local cmd
+                if win_info.loclist == 1 then
+                    if direction == 'backward' then
+                        cmd = 'lolder'
+                    else
+                        cmd = 'lnewer'
+                    end
+                        -- vim.cmd.lolder(math.max(1, vim.v.count))
+                else
+                    if direction == 'backward' then
+                        cmd = 'colder'
+                    else
+                        cmd = 'cnewer'
+                    end
+                end
+                local ok, err = pcall(vim.cmd, {
+                    cmd = cmd,
+                    count = math.max(1, vim.v.count),
+                })
+                if not ok then
+                    vim.api.nvim_err_writeln(err)
+                end
+            else
+                local it = require'impairative.helpers'.walk_files_tree(vim.fn.expand('%'), direction == 'backward')
+                local path
+                path = it:nth(math.max(1, vim.v.count))
+                if path then
+                    require'impairative.util'.jump_to{filename = path}
+                end
             end
         end,
     }
