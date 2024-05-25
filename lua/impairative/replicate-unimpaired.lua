@@ -164,6 +164,11 @@ return function()
             end
         end,
     }
+    :jump_in_buf {
+        key = 'n',
+        desc = 'jump to the {previous|next} SCM conflict marker or diff/path hunk',
+        fun = require'impairative.helpers'.conflict_marker_locations,
+    }
     :unified_function {
         key = '<Space>',
         desc = 'add blank line(s) {above|below} the current line',

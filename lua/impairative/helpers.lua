@@ -229,4 +229,31 @@ function M.decode_string(text)
     return table.concat(parts)
 end
 
+---@return Iter
+function M.conflict_marker_locations()
+    local pattern = vim.regex[=[^\(@@ .* @@\|[<=>|]\{7}[<=>|]\@!\)]=]
+    local entire_line_pattern = vim.regex[=[^.*$]=]
+    local i = 0
+    local bufnr = vim.api.nvim_get_current_buf()
+    local num_lines = vim.fn.line('$')
+    return vim.iter(function(...)
+        i = i + 1
+        if i <= num_lines then
+            return i
+        end
+    end)
+    :filter(function(line)
+        return pattern:match_line(bufnr, line - 1) ~= nil
+    end)
+    :map(function(line)
+        local start_col, end_col = entire_line_pattern:match_line(bufnr, line - 1)
+        return {
+            start_line = line,
+            start_col = start_col,
+            end_line = line,
+            end_col = end_col,
+        }
+    end)
+end
+
 return M

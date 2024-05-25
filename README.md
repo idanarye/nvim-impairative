@@ -23,6 +23,7 @@ DIFFERENCE FROM UNIMPAIRED
 * unimpaired's URL encoding encode spaces a `%20`. Impairative encodes them as `+`.
 * Impairative's C string decoder (`]y` / `]C`) knows how to decode 32bit Unicode codepoints (the ones that start with `\U`)
 * Impairative does not implement unimpaired's paste-related keymaps, because in Neovim the `'paste'` option is obsolete.
+* unimpaired's `[n` and `]n` work as a text object when used after an operator. Imerative's version of them work as one would expect - regular motions.
 
 
 CONTRIBUTION GUIDELINES

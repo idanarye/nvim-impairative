@@ -54,6 +54,59 @@ function ImpairativeOperations:unified_function(args)
     }
 end
 
+---@class ImpairativeOperationsJumpInBufArgs
+---@field key string
+---@field desc? string
+---@field fun fun(): Iter
+local ImpairativeOperationsJumpInBufArgs
+
+---@param args ImpairativeOperationsJumpInBufArgs
+---@return ImpairativeOperations
+function ImpairativeOperations:jump_in_buf(args)
+    vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.key, function()
+        local curosr = vim.api.nvim_win_get_cursor(0)
+
+        -- Note: prevs is zero-based because otherwise modulo math becomes too weird.
+        local prevs = {i = 0}
+        for pos in args.fun() do
+            if curosr[1] < pos.end_line then
+                break
+            elseif curosr[1] == pos.end_line and curosr[2] < pos.end_col then
+                break
+            end
+            prevs[prevs.i] = pos
+            prevs.i = (prevs.i + 1) % math.max(1, vim.v.count)
+        end
+        if prevs[0] == nil then
+            return
+        end
+        if prevs[math.max(1, vim.v.count) - 1] == nil then
+            vim.api.nvim_win_set_cursor(0, {prevs[0].end_line, prevs[0].end_col - 1})
+        else
+            vim.api.nvim_win_set_cursor(0, {prevs[prevs.i].end_line, prevs[prevs.i].end_col - 1})
+        end
+    end)
+    vim.keymap.set({'n', 'x', 'o'}, self._opts.forward .. args.key, function()
+        local curosr = vim.api.nvim_win_get_cursor(0)
+
+        local pos = args.fun()
+        :filter(function(pos)
+            if curosr[1] < pos.start_line then
+                return true
+            elseif curosr[1] == pos.start_line and curosr[2] < pos.start_col then
+                return true
+            else
+                return false
+            end
+        end)
+        :nth(math.max(1, vim.v.count))
+        if pos then
+            vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
+        end
+    end)
+    return self
+end
+
 ---@class ImpairativeOperationsCommandPairArgs
 ---@field key string
 ---@field backward string
