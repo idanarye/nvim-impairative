@@ -17,4 +17,32 @@ function M.jump_to(target)
     end
 end
 
+---@param from number
+---@param to number
+---@param step? number
+---@return Iter
+function M.iter_range(from, to, step)
+    step = step or 1
+    local i = from - step
+    if step < 0 then
+        return vim.iter(function()
+            i = i + step
+            if i < to then
+                return nil
+            else
+                return i
+            end
+        end)
+    else
+        return vim.iter(function()
+            i = i + step
+            if to < i then
+                return nil
+            else
+                return i
+            end
+        end)
+    end
+end
+
 return M

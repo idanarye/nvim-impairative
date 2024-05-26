@@ -233,15 +233,8 @@ end
 function M.conflict_marker_locations()
     local pattern = vim.regex[=[^\(@@ .* @@\|[<=>|]\{7}[<=>|]\@!\)]=]
     local entire_line_pattern = vim.regex[=[^.*$]=]
-    local i = 0
     local bufnr = vim.api.nvim_get_current_buf()
-    local num_lines = vim.fn.line('$')
-    return vim.iter(function(...)
-        i = i + 1
-        if i <= num_lines then
-            return i
-        end
-    end)
+    return require'impairative.util'.iter_range(1, vim.fn.line('$'))
     :filter(function(line)
         return pattern:match_line(bufnr, line - 1) ~= nil
     end)
