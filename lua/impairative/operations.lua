@@ -57,6 +57,7 @@ end
 ---@class ImpairativeOperationsJumpInBufArgs
 ---@field key string
 ---@field desc? string
+---@field extreme? {key: string, desc?: string}
 ---@field fun fun(): Iter
 local ImpairativeOperationsJumpInBufArgs
 
@@ -104,6 +105,22 @@ function ImpairativeOperations:jump_in_buf(args)
             vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
         end
     end, {desc = process_desc(args.desc, 2)})
+
+    if args.extreme then
+        vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.extreme.key, function()
+            local pos = args.fun():next()
+            if pos then
+                vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
+            end
+        end, {desc = process_desc(args.extreme.desc, 1)})
+        vim.keymap.set({'n', 'x', 'o'}, self._opts.forward .. args.extreme.key, function()
+            local pos = args.fun():last()
+            if pos then
+                vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
+            end
+        end, {desc = process_desc(args.extreme.desc, 1)})
+    end
+
     return self
 end
 

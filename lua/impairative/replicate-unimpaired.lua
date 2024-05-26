@@ -192,6 +192,10 @@ return function()
     :jump_in_buf {
         key = 'n',
         desc = 'jump to the {previous|next} SCM conflict marker or diff/path hunk',
+        extreme = {
+            key = 'N',
+            desc = 'jump to the {first|last} SCM conflict marker or diff/path hunk',
+        },
         fun = require'impairative.helpers'.conflict_marker_locations,
     }
     :unified_function {

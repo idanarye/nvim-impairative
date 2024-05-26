@@ -180,13 +180,19 @@ require'impairative'.operations { ... }
 :jump_in_buf {
     key = 'h',
     desc = 'jump to the {previous|next} markdown hyperlink',
+    extreme = {
+        key = 'H',
+        desc = 'jump to the {first|last} markdown hyperlink',
+    },
     fun = function()
         -- This is a pattern for markdown hyperlinks:
         local pattern = vim.regex[=[\[.\{-}\](.\{-})]=]
         local bufnr = vim.api.nvim_get_current_buf()
 
         -- Helper function provided by Impairative to create iterators over
-        -- ranges of numbers:
+        -- ranges of numbers. Note that this function is only good enough for
+        -- an example - it does not support lines with multiple hyperlinks and
+        -- it does not support hyperlinks that spawn multiple lines.
         return require'impairative.util'.iter_range(1, vim.fn.line('$'))
         :map(function(line)
             local from, to = pattern:match_line(bufnr, line - 1)
@@ -205,6 +211,8 @@ require'impairative'.operations { ... }
 ```
 
 `:jump_in_buf` will detect the location of the cursor in the buffer and use that to determine the location to jump to.
+
+`:jump_in_buf` has an `extreme` option for creating keymaps that jump to the first and last positions in the iterator.
 
 Jumping to different files will have to be done manually, using `:command_pair`/`:function_pair`/`:unified_function`.
 
@@ -226,6 +234,7 @@ Impairative's version of the keymaps has several differences from unimpaired's b
 * Impairative's C string decoder (`]y` / `]C`) knows how to decode 32bit Unicode codepoints (the ones that start with `\U`)
 * Impairative does not implement unimpaired's paste-related keymaps, because in Neovim the `'paste'` option is obsolete.
 * unimpaired's `[n` and `]n` work as a text object when used after an operator. Imerative's version of them works as one would expect - regular motions.
+* Impairative, unlike unimpaired, has a `[N` and `]N` version that jumps to the first and last conflict markers.
 
 CONTRIBUTION GUIDELINES
 =======================
