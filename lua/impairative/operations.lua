@@ -85,7 +85,7 @@ function ImpairativeOperations:jump_in_buf(args)
         else
             vim.api.nvim_win_set_cursor(0, {prevs[prevs.i].end_line, prevs[prevs.i].end_col - 1})
         end
-    end)
+    end, {desc = process_desc(args.desc, 1)})
     vim.keymap.set({'n', 'x', 'o'}, self._opts.forward .. args.key, function()
         local curosr = vim.api.nvim_win_get_cursor(0)
 
@@ -103,7 +103,7 @@ function ImpairativeOperations:jump_in_buf(args)
         if pos then
             vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
         end
-    end)
+    end, {desc = process_desc(args.desc, 2)})
     return self
 end
 
