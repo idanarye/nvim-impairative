@@ -216,6 +216,25 @@ require'impairative'.operations { ... }
 
 Jumping to different files will have to be done manually, using `:command_pair`/`:function_pair`/`:unified_function`.
 
+### TEXT/RANGE MANIPULATION
+
+Impairative can create pairs of keymaps for manipulating texts and ranges:
+
+```lua
+require'impairative'.operations { ... }
+:text_manipulation {
+    key = 'c',
+    line_key = true,
+    desc = 'convert to {lower|upper} case',
+    backward = string.lower,
+    forward = string.upper,
+}
+```
+
+These can be used either as operators (which a motion) or in visual/select mode. `line_key` adds a "motion" (actually part of an extra keymap) for operating them on the current line - either by repeating the regular `key` (like the builtin Vim commands) or - if `line_key` is set to a string - by using that string as the "motion".
+
+For text manipulations that encode and decode for a certain format, unimpaired has set the convention that "backward" is for encoding and "forward" is for decoding. For the sake of consistency, users of Impairative are encouraged to follow that rule.
+
 USAGE AS UNIMPAIRED REPLACEMENT
 -------------------------------
 
