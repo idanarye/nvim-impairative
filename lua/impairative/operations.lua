@@ -229,7 +229,7 @@ local ImpairativeOperationsTextManipulationArgs
 function ImpairativeOperations:text_manipulation(args)
     return self:range_manipulation {
         key = args.key,
-        line_key = args.key,
+        line_key = args.line_key,
         desc = args.desc,
         fun = function(op)
             local function change_lines(orig_lines)
