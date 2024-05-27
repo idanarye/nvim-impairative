@@ -235,6 +235,44 @@ These can be used either as operators (which a motion) or in visual/select mode.
 
 For text manipulations that encode and decode for a certain format, unimpaired has set the convention that "backward" is for encoding and "forward" is for decoding. For the sake of consistency, users of Impairative are encouraged to follow that rule.
 
+Impairative can also create keymaps that manipulate the range directly using `:range_manipulation`:
+
+```lua
+require'impairative'.operations { ... }
+:range_manipulation {
+    key = 'r',
+    desc = '{add|remove} error marks',
+    fun = function(args)
+        local bufnr = vim.api.nvim_get_current_buf()
+        if args.direction == 'backward' then
+            vim.api.nvim_buf_set_extmark(bufnr, ns, args.start_line - 1, args.start_col - 1, {
+                end_row = args.end_line - 1,
+                end_col = args.end_col,
+                hl_group = 'ErrorMsg',
+            })
+        else
+            local marks = vim.api.nvim_buf_get_extmarks(
+                bufnr,
+                ns,
+                {args.start_line - 1, args.start_col - 1},
+                {args.end_line, args.end_col},
+                {overlap = true}
+            )
+            for _, mark in ipairs(marks) do
+                vim.api.nvim_buf_del_extmark(bufnr, ns, mark[1])
+            end
+        end
+    end,
+}
+```
+
+These are a bit more complex. The function receives an arguments table that contains the following fields:
+
+* `direction` - either `'backward'` or `'forward'`, depending on the prefix key used.
+* `count` and `count1` - the counts the keymap was invoked with. Don't use `vim.v.count` and `vim.v.count1` - they will contain the count of the motion rather then the operator.
+* `range_type` - `'char'`, `'line'` or `'block'`.
+* `start_line`, `end_line`, `start_col` and `end_col` - the selected range. Both lines and columns are 1-based.
+
 USAGE AS UNIMPAIRED REPLACEMENT
 -------------------------------
 
