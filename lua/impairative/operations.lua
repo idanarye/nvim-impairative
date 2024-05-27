@@ -9,13 +9,15 @@ local ImpairativeOperations = {}
 
 ---@class ImpairativeOperationsFunctionPairArgs
 ---@field key string
----@field desc? string
+---@field desc? string | {backward: string, forward: string}
 ---@field backward fun()
 ---@field forward fun()
 local ImpairativeOperationsFunctionPairArgs
 
 local function process_desc(desc, i)
-    if desc then
+    if type(desc) == "table" then
+        return desc[({"backward", "forward"})[i]]
+    elseif desc then
         return desc:gsub("{(.-)}", function(m)
             local parts = vim.split(m, '|', {plain = true})
             if #parts == 2 then
@@ -35,7 +37,7 @@ end
 
 ---@class ImpairativeOperationsUnifiedFunctionArgs
 ---@field key string
----@field desc? string
+---@field desc? string | {backward: string, forward: string}
 ---@field fun fun(direction: 'backward'|'forward')
 local ImpairativeOperationsUnifiedFunctionArgs
 
@@ -56,8 +58,8 @@ end
 
 ---@class ImpairativeOperationsJumpInBufArgs
 ---@field key string
----@field desc? string
----@field extreme? {key: string, desc?: string}
+---@field desc? string | {backward: string, forward: string}
+---@field extreme? {key: string, desc?: string | {backward: string, forward: string}}
 ---@field fun fun(): Iter
 local ImpairativeOperationsJumpInBufArgs
 
@@ -133,9 +135,23 @@ local ImpairativeOperationsCommandPairArgs
 ---@param args ImpairativeOperationsCommandPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:command_pair(args)
-    vim.keymap.set('n', self._opts.backward .. args.key, '<Cmd>' .. args.backward .. '<Cr>')
-    vim.keymap.set('n', self._opts.forward .. args.key, '<Cmd>' .. args.forward .. '<Cr>')
-    return self
+    return self:unified_function {
+        key = args.key,
+        desc = {
+            backward = ('Run the "%s" command'):format(args.backward),
+            forward = ('Run the "%s" command'):format(args.forward),
+        },
+        fun = function(direction)
+            local cmd = args[direction]
+            if 0 < vim.v.count then
+                cmd = vim.v.count .. cmd
+            end
+            vim.cmd(cmd)
+        end
+    }
+    --vim.keymap.set('n', self._opts.backward .. args.key, '<Cmd>' .. args.backward .. '<Cr>')
+    --vim.keymap.set('n', self._opts.forward .. args.key, '<Cmd>' .. args.forward .. '<Cr>')
+    --return self
 end
 
 ---@class ImpairativeRangeOp
@@ -152,7 +168,7 @@ local ImpairativeRangeOp
 ---@class ImpairativeOperationRangeManipulationArgs
 ---@field key string
 ---@field line_key? string|boolean
----@field desc? string
+---@field desc? string | {backward: string, forward: string}
 ---@field fun fun(args: ImpairativeRangeOp)
 local ImpairativeOperationRangeManipulationArgs
 
@@ -203,7 +219,7 @@ end
 ---@class ImpairativeOperationsTextManipulationArgs
 ---@field key string
 ---@field line_key? string|boolean
----@field desc? string
+---@field desc? string | {backward: string, forward: string}
 ---@field backward fun(orig: string): string
 ---@field forward fun(orig: string): string
 local ImpairativeOperationsTextManipulationArgs
