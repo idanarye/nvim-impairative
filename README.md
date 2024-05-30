@@ -3,6 +3,16 @@
 INTRODUCTION
 ============
 
+Impairative is a helper plugin for creating pairs of complementing keymaps:
+
+* Toggle options on/off.
+* Jump back and forth on certain lists.
+* Encode/decode text using certain formats.
+
+Impairative is inspired by [unimpaired](https://github.com/tpope/vim-unimpaired), but unlike unimpaired - which provides a big predefined set of keymaps - Impairative provides helper functions for easily defining these keymaps.
+
+Impairative does provide, though, [an helper function that can be used to easily replicate the keymaps unimpaired defines](#usage-as-unimpaired-replacement) (although with slight modifications) - making it usable as an unimpaired replacement.
+
 SETUP
 =====
 
