@@ -30,7 +30,7 @@ describe('Impairative toggling', function()
         vim.api.nvim_feedkeys('yo1', 'mix', false)
         assert.equal(vim.o.spell, false)
 
-        vim.cmd.close()
+        vim.cmd'close!'
     end)
 
     it('field', function()

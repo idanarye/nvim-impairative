@@ -24,7 +24,7 @@ describe('Impairative operations', function()
         vim.api.nvim_feedkeys(']1', 'mix', false)
         assert.equal(vim.fn.bufname(), 'baz')
 
-        vim.cmd.close()
+        vim.cmd'close!'
     end)
 
     it('function pair', function()
@@ -105,7 +105,7 @@ describe('Impairative operations', function()
         vim.api.nvim_feedkeys('[4', 'mix', false)
         assert.equal(vim.api.nvim_win_get_cursor(0)[1], 6)
 
-        vim.cmd.close()
+        vim.cmd'close!'
     end)
 
     it('text_manipulation', function()
@@ -132,7 +132,7 @@ describe('Impairative operations', function()
         vim.api.nvim_feedkeys(']5iw', 'mix', false)
         assert.equal(vim.api.nvim_buf_get_lines(0, 0, 1, true)[1] , 'hello WORLD')
 
-        vim.cmd.close()
+        vim.cmd'close!'
     end)
 
     it('range_manipulation', function()
@@ -167,6 +167,6 @@ describe('Impairative operations', function()
             {'forward', 'world'},
         })
 
-        vim.cmd.close()
+        vim.cmd'close!'
     end)
 end)
