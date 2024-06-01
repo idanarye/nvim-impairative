@@ -107,4 +107,66 @@ describe('Impairative operations', function()
 
         vim.cmd.close()
     end)
+
+    it('text_manipulation', function()
+        -- Do it in a new window to avoid trouble
+        vim.cmd.new()
+
+        require'impairative'.operations {
+            backward = '[',
+            forward = ']',
+        }
+        :text_manipulation {
+            key = '5',
+            backward = string.lower,
+            forward = string.upper,
+        }
+
+        vim.api.nvim_buf_set_lines(0, 0, 0, true, {'Hello World'})
+
+        vim.api.nvim_win_set_cursor(0, {1, 0})
+        vim.api.nvim_feedkeys('[5iw', 'mix', false)
+        assert.equal(vim.api.nvim_buf_get_lines(0, 0, 1, true)[1] , 'hello World')
+
+        vim.api.nvim_win_set_cursor(0, {1, 6})
+        vim.api.nvim_feedkeys(']5iw', 'mix', false)
+        assert.equal(vim.api.nvim_buf_get_lines(0, 0, 1, true)[1] , 'hello WORLD')
+
+        vim.cmd.close()
+    end)
+
+    it('range_manipulation', function()
+        vim.cmd.new()
+
+        local data = {}
+
+        require'impairative'.operations {
+            backward = '[',
+            forward = ']',
+        }
+        :range_manipulation {
+            key = '6',
+            fun = function(args)
+                table.insert(data, {
+                    args.direction,
+                    vim.api.nvim_buf_get_text(0, args.start_line - 1, args.start_col - 1, args.end_line - 1, args.end_col, {})[1]
+                })
+            end
+        }
+
+        vim.api.nvim_buf_set_lines(0, 0, 0, true, {'hello world'})
+
+        vim.api.nvim_win_set_cursor(0, {1, 0})
+        vim.api.nvim_feedkeys('[6iw', 'mix', false)
+
+        vim.api.nvim_win_set_cursor(0, {1, 6})
+        vim.api.nvim_feedkeys(']6iw', 'mix', false)
+
+        assert.are.same(data, {
+            {'backward', 'hello'},
+            {'forward', 'world'},
+        })
+
+        vim.cmd.close()
+    end)
 end)
