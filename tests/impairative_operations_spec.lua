@@ -90,7 +90,7 @@ describe('Impairative operations', function()
                     {start_line = 6, start_col = 0, end_line = 6, end_col = 1},
                     {start_line = 8, start_col = 0, end_line = 8, end_col = 1},
                 }
-            end
+            end,
         }
 
         vim.api.nvim_buf_set_lines(0, 0, 0, true, vim.fn['repeat']({''}, 10))
@@ -151,7 +151,7 @@ describe('Impairative operations', function()
                     args.direction,
                     vim.api.nvim_buf_get_text(0, args.start_line - 1, args.start_col - 1, args.end_line - 1, args.end_col, {})[1]
                 })
-            end
+            end,
         }
 
         vim.api.nvim_buf_set_lines(0, 0, 0, true, {'hello world'})

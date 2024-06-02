@@ -75,7 +75,7 @@ describe('Impairative toggling', function()
             key = '3',
             table = data,
             field = 'field',
-            values = {[false] = 'f', [true] = 't'}
+            values = {[false] = 'f', [true] = 't'},
         }
 
         vim.api.nvim_feedkeys('[o3', 'mix', false)
@@ -109,7 +109,7 @@ describe('Impairative toggling', function()
             end,
             set = function(value)
                 data = value
-            end
+            end,
         }
 
         vim.api.nvim_feedkeys('[o4', 'mix', false)
@@ -126,6 +126,89 @@ describe('Impairative toggling', function()
         assert.equal(data, true)
         vim.api.nvim_feedkeys('yo4', 'mix', false)
         assert.equal(data, false)
+    end)
+
+    it('manual', function()
+        local data = false
+
+        require'impairative'.toggling {
+            enable = '[o',
+            disable = ']o',
+            toggle = 'yo',
+        }
+        :manual {
+            key = '5',
+            enable = function()
+                data = true
+            end,
+            disable = function()
+                data = false
+            end,
+            toggle = function()
+                data = not data
+            end
+        }
+
+        vim.api.nvim_feedkeys('[o5', 'mix', false)
+        assert.equal(data, true)
+        vim.api.nvim_feedkeys('[o5', 'mix', false)
+        assert.equal(data, true)
+
+        vim.api.nvim_feedkeys(']o5', 'mix', false)
+        assert.equal(data, false)
+        vim.api.nvim_feedkeys(']o5', 'mix', false)
+        assert.equal(data, false)
+
+        vim.api.nvim_feedkeys('yo5', 'mix', false)
+        assert.equal(data, true)
+        vim.api.nvim_feedkeys('yo5', 'mix', false)
+        assert.equal(data, false)
+    end)
+
+    it('manual with commands', function()
+        -- Do it in a new window to avoid trouble
+        vim.cmd.new()
+
+        local data = false
+
+        vim.api.nvim_buf_create_user_command(0, 'TestEnable', function()
+            data = true
+        end, {})
+        vim.api.nvim_buf_create_user_command(0, 'TestDisable', function()
+            data = false
+        end, {})
+        vim.api.nvim_buf_create_user_command(0, 'TestToggle', function()
+            data = not data
+        end, {})
+
+        require'impairative'.toggling {
+            enable = '[o',
+            disable = ']o',
+            toggle = 'yo',
+        }
+        :manual {
+            key = '6',
+            enable = 'TestEnable',
+            disable = 'TestDisable',
+            toggle = 'TestToggle',
+        }
+
+        vim.api.nvim_feedkeys('[o6', 'mix', false)
+        assert.equal(data, true)
+        vim.api.nvim_feedkeys('[o6', 'mix', false)
+        assert.equal(data, true)
+
+        vim.api.nvim_feedkeys(']o6', 'mix', false)
+        assert.equal(data, false)
+        vim.api.nvim_feedkeys(']o6', 'mix', false)
+        assert.equal(data, false)
+
+        vim.api.nvim_feedkeys('yo6', 'mix', false)
+        assert.equal(data, true)
+        vim.api.nvim_feedkeys('yo6', 'mix', false)
+        assert.equal(data, false)
+
+        vim.cmd'close!'
     end)
 end)
 

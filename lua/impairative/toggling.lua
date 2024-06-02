@@ -8,6 +8,34 @@ local ImpairativeTogglingOptions
 ---@field _opts ImpairativeTogglingOptions
 local ImpairativeToggling = {}
 
+---@class ImpairativeTogglingManualArgs
+---@field key string
+---@field name? string
+---@field enable string | fun()
+---@field disable string | fun()
+---@field toggle string | fun()
+local ImpairativeTogglingManualArgs
+
+---@param args ImpairativeTogglingManualArgs
+function ImpairativeToggling:manual(args)
+    for _, operation in ipairs{'enable', 'disable', 'toggle'} do
+        local action = args[operation]
+        if action then
+            if type(action) == 'string' then
+                action = ('<Cmd>%s<Cr>'):format(action)
+            end
+            local mapping = self._opts[operation] .. args.key
+            local opts
+            if args.name then
+                opts = {desc = ("%s %s"):format(operation, args.name)}
+            end
+            vim.keymap.set('n', mapping, action, opts)
+        end
+    end
+
+    return self
+end
+
 ---@class ImpairativeTogglingGetterSetterArgs
 ---@field key string
 ---@field name? string
@@ -18,24 +46,19 @@ local ImpairativeTogglingGetterSetterArgs
 ---@param args ImpairativeTogglingGetterSetterArgs
 ---@return ImpairativeToggling
 function ImpairativeToggling:getter_setter(args)
-    local function gen_opts(fmt)
-        if args.name then
-            return {
-                desc = fmt:format(args.name),
-            }
-        end
-    end
-
-    vim.keymap.set('n', self._opts.toggle .. args.key, function()
-        args.set(not args.get())
-    end, gen_opts('toggle %s'))
-    vim.keymap.set('n', self._opts.enable .. args.key, function()
-        args.set(true)
-    end, gen_opts('enable %s'))
-    vim.keymap.set('n', self._opts.disable .. args.key, function()
-        args.set(false)
-    end, gen_opts('disable %s'))
-    return self
+    return self:manual {
+        key = args.key,
+        name = args.name,
+        enable = function()
+            args.set(true)
+        end,
+        disable = function()
+            args.set(false)
+        end,
+        toggle = function()
+            args.set(not args.get())
+        end,
+    }
 end
 
 ---@class (exact) ImpairativeTogglingFieldArgs

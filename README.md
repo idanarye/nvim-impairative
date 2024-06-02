@@ -89,7 +89,7 @@ require'impairative'.toggling { ... }
 }
 ```
 
-Finally, the `:getter_setter` method can be used for more complex cases, where the option at hand is not a simple field. For example:
+The `:getter_setter` method can be used for more complex cases, where the option at hand is not a simple field. For example:
 
 ```lua
 require'impairative'.toggling { ... }
@@ -98,6 +98,21 @@ require'impairative'.toggling { ... }
     name = 'inlay hints',
     get = vim.lsp.inlay_hint.is_enabled,
     set = vim.lsp.inlay_hint.enable,
+}
+```
+
+Finally, for maximum manual control, the `:manual` method can be used to directly specify the operation of each keymap:
+```lua
+require'impairative'.toggling { ... }
+:manual {
+    key = "t",
+    name = "Treesitter context",
+    enable = "TSContextEnable",
+    -- Both commands and functions are supported
+    disable = function()
+        vim.cmd.TSContextDisable()
+    end,
+    toggle = "TSContextToggle",
 }
 ```
 
