@@ -1,0 +1,257 @@
+==============================================================================
+Impairative - Pairs of complementing keybinds                      *impairative*
+
+ImpairativeSetupArgs                                      *ImpairativeSetupArgs*
+
+    Fields: ~
+        {enable?}                (string)                             Leader keys for turning settings on in `toggling` keymaps
+        {disable?}               (string)                             Leader keys for turning settings off in `toggling` keymaps
+        {toggle?}                (string)                             Leader keys for toggling settings in `toggling` keymaps
+        {toggling?}              (fun(helper:ImpairativeToggling))    Define mappings with the supplied |ImpairativeToggling|
+        {backward?}              (string)                             Leader keys for turning the operation backward in `operations` keymaps
+        {forward?}               (string)                             Leader keys for running the operation forward in `operations` keymaps
+        {operations?}            (fun(helper:ImpairativeOperations))  Define mappings with the supplied |ImpairativeOperations|
+        {replicate_unimpaired?}  (boolean)                            Create (almost) the same mappings vim-unimpaired creates
+
+
+M.setup({args})                                              *impairative.setup*
+    Configure keymaps
+
+    Completly optional - the helper objects can be created and used directly.
+
+    Parameters: ~
+        {args}  (ImpairativeSetupArgs)
+
+
+M.toggling({opts})                                        *impairative.toggling*
+    Create an |ImpairativeToggling| helper to define mappings with
+
+    Parameters: ~
+        {opts}  (ImpairativeTogglingOptions)
+
+    Returns: ~
+        (ImpairativeToggling)
+
+
+M.operations({opts})                                    *impairative.operations*
+    Create an |ImpairativeOperations| helper to define mappings with
+
+    Parameters: ~
+        {opts}  (ImpairativeOperationsOptions)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+ImpairativeTogglingOptions                          *ImpairativeTogglingOptions*
+
+    Fields: ~
+        {enable}   (string)  Leader keys for turning settings on
+        {disable}  (string)  Leader keys for turning settings off
+        {toggle}   (string)  Leader keys for toggling settings
+
+
+ImpairativeToggling                                        *ImpairativeToggling*
+
+    Fields: ~
+        {_opts}  (ImpairativeTogglingOptions)
+
+
+ImpairativeTogglingManualArgs                    *ImpairativeTogglingManualArgs*
+
+    Fields: ~
+        {key}      (string)
+        {name?}    (string)
+        {enable}   (string|fun())
+        {disable}  (string|fun())
+        {toggle}   (string|fun())
+
+
+ImpairativeToggling:manual({args})                  *ImpairativeToggling:manual*
+
+    Parameters: ~
+        {args}  (ImpairativeTogglingManualArgs)
+
+
+ImpairativeTogglingGetterSetterArgs        *ImpairativeTogglingGetterSetterArgs*
+
+    Fields: ~
+        {key}    (string)
+        {name?}  (string)
+        {get}    (fun():boolean)
+        {set}    (fun(value:boolean))
+
+
+                                             *ImpairativeToggling:getter_setter*
+ImpairativeToggling:getter_setter({args})
+
+    Parameters: ~
+        {args}  (ImpairativeTogglingGetterSetterArgs)
+
+    Returns: ~
+        (ImpairativeToggling)
+
+
+                                                                              **
+
+
+ImpairativeToggling:field({args})                    *ImpairativeToggling:field*
+
+    Parameters: ~
+        {args}  (ImpairativeTogglingFieldArgs)
+
+    Returns: ~
+        (ImpairativeToggling)
+
+
+                                                                              **
+
+
+ImpairativeToggling:option({args})                  *ImpairativeToggling:option*
+
+    Parameters: ~
+        {args}  (ImpairativeTogglingOptionArgs)
+
+    Returns: ~
+        (ImpairativeToggling)
+
+
+ImpairativeOperationsOptions                      *ImpairativeOperationsOptions*
+
+    Fields: ~
+        {backward}  (string)  Leader keys for turning the operation backward
+        {forward}   (string)  Leader keys for running the operation forward
+
+
+ImpairativeOperations                                    *ImpairativeOperations*
+
+    Fields: ~
+        {_opts}  (ImpairativeOperationsOptions)
+
+
+ImpairativeOperationsFunctionPairArgs    *ImpairativeOperationsFunctionPairArgs*
+
+    Fields: ~
+        {key}       (string)
+        {desc?}     (string|{backward:string,forward:string})
+        {backward}  (fun())
+        {forward}   (fun())
+
+
+                                           *ImpairativeOperations:function_pair*
+ImpairativeOperations:function_pair({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationsFunctionPairArgs)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+ImpairativeOperationsUnifiedFunctionArgs*ImpairativeOperationsUnifiedFunctionArgs*
+
+    Fields: ~
+        {key}    (string)
+        {desc?}  (string|{backward:string,forward:string})
+        {fun}    (fun(direction:"backward"|"forward"))
+
+
+                                        *ImpairativeOperations:unified_function*
+ImpairativeOperations:unified_function({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationsUnifiedFunctionArgs)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+ImpairativeOperationsJumpInBufArgs          *ImpairativeOperationsJumpInBufArgs*
+
+    Fields: ~
+        {key}       (string)
+        {desc?}     (string|{backward:string,forward:string})
+        {extreme?}  ({key:string,desc?:string|{backward:string,forward:string}})
+        {fun}       (fun():Iter)
+
+
+                                             *ImpairativeOperations:jump_in_buf*
+ImpairativeOperations:jump_in_buf({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationsJumpInBufArgs)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+ImpairativeOperationsCommandPairArgs      *ImpairativeOperationsCommandPairArgs*
+
+    Fields: ~
+        {key}       (string)
+        {backward}  (string)
+        {forward}   (string)
+
+
+                                            *ImpairativeOperations:command_pair*
+ImpairativeOperations:command_pair({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationsCommandPairArgs)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+ImpairativeRangeOp                                          *ImpairativeRangeOp*
+
+    Fields: ~
+        {direction}   ("backward"|"forward")
+        {count}       (integer)
+        {count1}      (integer)
+        {range_type}  (string)
+        {start_line}  (integer)
+        {end_line}    (integer)
+        {start_col}   (integer)
+        {end_col}     (integer)
+
+
+                                     *ImpairativeOperationRangeManipulationArgs*
+ImpairativeOperationRangeManipulationArgs
+
+    Fields: ~
+        {key}        (string)
+        {line_key?}  (string|boolean)
+        {desc?}      (string|{backward:string,forward:string})
+        {fun}        (fun(args:ImpairativeRangeOp))
+
+
+                                      *ImpairativeOperations:range_manipulation*
+ImpairativeOperations:range_manipulation({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationRangeManipulationArgs)
+
+
+                                     *ImpairativeOperationsTextManipulationArgs*
+ImpairativeOperationsTextManipulationArgs
+
+    Fields: ~
+        {key}        (string)
+        {line_key?}  (string|boolean)
+        {desc?}      (string|{backward:string,forward:string})
+        {backward}   (fun(orig:string):string)
+        {forward}    (fun(orig:string):string)
+
+
+                                       *ImpairativeOperations:text_manipulation*
+ImpairativeOperations:text_manipulation({args})
+
+    Parameters: ~
+        {args}  (ImpairativeOperationsTextManipulationArgs)
+
+    Returns: ~
+        (ImpairativeOperations)
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:

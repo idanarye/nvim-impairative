@@ -5,4 +5,4 @@ test:
 
 docs:
 	mkdir -p doc
-	lemmy-help --prefix-func lua/impairative/init.lua | tee doc/impairative.txt
+	lemmy-help --prefix-func lua/impairative/{init.lua,toggling.lua,operations.lua} | tee doc/impairative.txt
