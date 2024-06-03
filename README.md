@@ -16,7 +16,7 @@ Impairative does provide, though, [an helper function that can be used to easily
 SETUP
 =====
 
-Install Impairative with your plugin manager of choice. There is no need to call `require'impairative'.setup`.
+Install Impairative with your plugin manager of choice. There is no need to call `require'impairative'.setup`, [but it can still be used as an entry point](#configuring-with-setup).
 
 CONTROLING OPTIONS
 ------------------
@@ -317,6 +317,66 @@ Impairative's version of the keymaps has several differences from unimpaired's b
 * Impairative does not implement unimpaired's paste-related keymaps, because in Neovim the `'paste'` option is obsolete.
 * unimpaired's `[n` and `]n` work as a text object when used after an operator. Imerative's version of them works as one would expect - regular motions.
 * Impairative, unlike unimpaired, has a `[N` and `]N` version that jumps to the first and last conflict markers.
+
+CONFIGURING WITH SETUP
+----------------------
+
+To support lazy.vim's `opts =` configuration style, Impairative's `setup` function can be used to set up the keymaps:
+
+```lua
+--- ***********************************
+--- *     I M P O R T A N T ! ! !     * 
+--- *                                 *
+--- * These are **NOT** the defaults! *
+--- * The defaults are to do nothing. *
+--- ***********************************
+require'impairative'.setup {
+    -- Configure toggling using an helper
+    enable = '[o',
+    disable = ']o',
+    toggle = 'yo',
+    toggling = function(h)
+        h:option {
+            key = 'n',
+            option = 'number',
+        }
+        h:option {
+            key = 'r',
+            option = 'relativenumber',
+        }
+        h:option {
+            key = 's',
+            option = 'spell',
+        }
+    end,
+
+    -- Configure operations using an helper
+    backward = '[',
+    forward = ']',
+    operations = function(h)
+        h:command_pair {
+            key = 'b',
+            backward = 'bprevious',
+            forward = 'bnext',
+        }
+        h:command_pair {
+            key = 'B',
+            backward = 'bfirst',
+            forward = 'blast',
+        }
+    end,
+
+    -- Defaults to false
+    replicate_unimpaired = true,
+}
+```
+
+The settings are grouped into three:
+
+1. `enable`, `disable`, `toggle`, and `toggling` - create a [toggling helper](#controling-options) and pass it to the function. If the mapping leaders are not specified, they'll default to `[o`, `]o`, and `yo`.
+2. `backward`, `forward`, and `operations` - create an [operations helper](#operation-pairs) and pass it to the function. If the mapping leaders are not specified, they'll default to `[` and `]`.
+3. `replicate_unimpaired` - [generate the keymaps from unimpaired](#usage-as-unimpaired-replacement).
+
 
 CONTRIBUTION GUIDELINES
 =======================
