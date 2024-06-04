@@ -324,12 +324,12 @@ CONFIGURING WITH SETUP
 To support lazy.vim's `opts =` configuration style, Impairative's `setup` function can be used to set up the keymaps:
 
 ```lua
---- ***********************************
---- *     I M P O R T A N T ! ! !     * 
---- *                                 *
---- * These are **NOT** the defaults! *
---- * The defaults are to do nothing. *
---- ***********************************
+-- ***********************************
+-- *     I M P O R T A N T ! ! !     * 
+-- *                                 *
+-- * These are **NOT** the defaults! *
+-- * The defaults are to do nothing. *
+-- ***********************************
 require'impairative'.setup {
     -- Configure toggling using an helper
     enable = '[o',
