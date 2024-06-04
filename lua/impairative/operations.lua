@@ -42,7 +42,7 @@ local ImpairativeOperationsFunctionPairArgs
 ---
 ---If the operations are |cmdline| commands, prefer
 ---|ImpairativeOperations:command_pair| which also handles |count|.
----@param args ImpairativeOperationsFunctionPairArgs
+---@param args ImpairativeOperationsFunctionPairArgs See |ImpairativeOperationsFunctionPairArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:function_pair(args)
     vim.keymap.set('n', self._opts.backward .. args.key, args.backward, {desc = process_desc(args.desc, 1)})
@@ -57,7 +57,7 @@ end
 local ImpairativeOperationsUnifiedFunctionArgs
 
 ---Bind operation mappings using a function that receives the direction as a parameter.
----@param args ImpairativeOperationsUnifiedFunctionArgs
+---@param args ImpairativeOperationsUnifiedFunctionArgs See |ImpairativeOperationsUnifiedFunctionArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:unified_function(args)
     return self:function_pair {
@@ -86,7 +86,7 @@ local ImpairativeOperationsJumpInBufArgs
 ---lines are 1-based and columns are 0-based.
 ---
 ---These keymaps can also be used in |Operator-pending-mode|.
----@param args ImpairativeOperationsJumpInBufArgs
+---@param args ImpairativeOperationsJumpInBufArgs See |ImpairativeOperationsJumpInBufArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:jump_in_buf(args)
     vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.key, function()
@@ -161,7 +161,7 @@ local ImpairativeOperationsCommandPairArgs
 ---helper method:
 ---* Automatically generates descriptions based on the commands.
 ---* Automatically passes the |count| when the mapping is activated with one.
----@param args ImpairativeOperationsCommandPairArgs
+---@param args ImpairativeOperationsCommandPairArgs See |ImpairativeOperationsCommandPairArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:command_pair(args)
     return self:unified_function {
@@ -180,6 +180,7 @@ function ImpairativeOperations:command_pair(args)
     }
 end
 
+---Parameters for function that runs the operator in |ImpairativeOperations:range_manipulation|.
 ---@class ImpairativeRangeOp
 ---@field direction 'backward'|'forward' The direction of the operator that was invoked
 ---@field count integer The |v:count| the operator was invoked with
@@ -195,7 +196,7 @@ local ImpairativeRangeOp
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field line_key? string|boolean A "motion" for running the operator on the same line
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
----@field fun fun(args: ImpairativeRangeOp) Performs the operation
+---@field fun fun(args: ImpairativeRangeOp) Performs the operation. See |ImpairativeRangeOp|
 local ImpairativeOperationRangeManipulationArgs
 
 ---Bind operation mappings that operates on a range in the buffer.
@@ -204,7 +205,7 @@ local ImpairativeOperationRangeManipulationArgs
 ---the command or by running it from visual mode. Additionally, if `line_key`
 ---is provided, that key can be used to run the operator on the current line.
 ---If `line_key = true` then the key from the `key` argument will be used.
----@param args ImpairativeOperationRangeManipulationArgs
+---@param args ImpairativeOperationRangeManipulationArgs See |ImpairativeOperationRangeManipulationArgs|
 function ImpairativeOperations:range_manipulation(args)
     local line_key
     if args.line_key == true then
@@ -268,7 +269,7 @@ local ImpairativeOperationsTextManipulationArgs
 ---`line_key` is provided, that key can be used to run the operator on the
 ---current line. If `line_key = true` then the key from the `key` argument will
 ---be used.
----@param args ImpairativeOperationsTextManipulationArgs
+---@param args ImpairativeOperationsTextManipulationArgs See |ImpairativeOperationsTextManipulationArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:text_manipulation(args)
     return self:range_manipulation {

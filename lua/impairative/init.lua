@@ -15,7 +15,7 @@ local ImpairativeSetupArgs
 ---Configure keymaps
 ---
 ---Completly optional - the helper objects can be created and used directly.
----@param args ImpairativeSetupArgs
+---@param args ImpairativeSetupArgs See |ImpairativeSetupArgs|
 function M.setup(args)
     if args.toggling then
         args.toggling(M.toggling {
@@ -36,7 +36,7 @@ function M.setup(args)
 end
 
 ---Create an |ImpairativeToggling| helper to define mappings with
----@param opts ImpairativeTogglingOptions
+---@param opts ImpairativeTogglingOptions See |ImpairativeTogglingOptions|
 ---@return ImpairativeToggling
 function M.toggling(opts)
     return setmetatable({
@@ -47,7 +47,7 @@ function M.toggling(opts)
 end
 
 ---Create an |ImpairativeOperations| helper to define mappings with
----@param opts ImpairativeOperationsOptions
+---@param opts ImpairativeOperationsOptions See |ImpairativeOperationsOptions|
 ---@return ImpairativeOperations
 function M.operations(opts)
     return setmetatable({

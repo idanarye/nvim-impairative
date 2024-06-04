@@ -20,14 +20,14 @@ M.setup({args})                                              *impairative.setup*
     Completly optional - the helper objects can be created and used directly.
 
     Parameters: ~
-        {args}  (ImpairativeSetupArgs)
+        {args}  (ImpairativeSetupArgs)  See |ImpairativeSetupArgs|
 
 
 M.toggling({opts})                                        *impairative.toggling*
     Create an |ImpairativeToggling| helper to define mappings with
 
     Parameters: ~
-        {opts}  (ImpairativeTogglingOptions)
+        {opts}  (ImpairativeTogglingOptions)  See |ImpairativeTogglingOptions|
 
     Returns: ~
         (ImpairativeToggling)
@@ -37,7 +37,7 @@ M.operations({opts})                                    *impairative.operations*
     Create an |ImpairativeOperations| helper to define mappings with
 
     Parameters: ~
-        {opts}  (ImpairativeOperationsOptions)
+        {opts}  (ImpairativeOperationsOptions)  See |ImpairativeOperationsOptions|
 
     Returns: ~
         (ImpairativeOperations)
@@ -71,7 +71,7 @@ ImpairativeToggling:manual({args})                  *ImpairativeToggling:manual*
     Bind toggling mappings by directly specifying the commands for each mapping.
 
     Parameters: ~
-        {args}  (ImpairativeTogglingManualArgs)
+        {args}  (ImpairativeTogglingManualArgs)  See |ImpairativeTogglingManualArgs|
 
 
 ImpairativeTogglingGetterSetterArgs        *ImpairativeTogglingGetterSetterArgs*
@@ -88,7 +88,7 @@ ImpairativeToggling:getter_setter({args})
     Bind toggling mappings by directly specifying a getter and a setter.
 
     Parameters: ~
-        {args}  (ImpairativeTogglingGetterSetterArgs)
+        {args}  (ImpairativeTogglingGetterSetterArgs)  See |ImpairativeTogglingGetterSetterArgs|
 
     Returns: ~
         (ImpairativeToggling)
@@ -112,7 +112,7 @@ ImpairativeToggling:field({args})                    *ImpairativeToggling:field*
     instead.
 
     Parameters: ~
-        {args}  (ImpairativeTogglingFieldArgs)
+        {args}  (ImpairativeTogglingFieldArgs)  See |ImpairativeTogglingFieldArgs|
 
     Returns: ~
         (ImpairativeToggling)
@@ -130,7 +130,7 @@ ImpairativeToggling:option({args})                  *ImpairativeToggling:option*
     Bind toggling mappings for a Neovim option using |vim.o|.
 
     Parameters: ~
-        {args}  (ImpairativeTogglingOptionArgs)
+        {args}  (ImpairativeTogglingOptionArgs)  See |ImpairativeTogglingOptionArgs|
 
     Returns: ~
         (ImpairativeToggling)
@@ -179,7 +179,7 @@ ImpairativeOperations:function_pair({args})
     |ImpairativeOperations:command_pair| which also handles |count|.
 
     Parameters: ~
-        {args}  (ImpairativeOperationsFunctionPairArgs)
+        {args}  (ImpairativeOperationsFunctionPairArgs)  See |ImpairativeOperationsFunctionPairArgs|
 
     Returns: ~
         (ImpairativeOperations)
@@ -198,7 +198,7 @@ ImpairativeOperations:unified_function({args})
     Bind operation mappings using a function that receives the direction as a parameter.
 
     Parameters: ~
-        {args}  (ImpairativeOperationsUnifiedFunctionArgs)
+        {args}  (ImpairativeOperationsUnifiedFunctionArgs)  See |ImpairativeOperationsUnifiedFunctionArgs|
 
     Returns: ~
         (ImpairativeOperations)
@@ -224,7 +224,7 @@ ImpairativeOperations:jump_in_buf({args})
     These keymaps can also be used in |Operator-pending-mode|.
 
     Parameters: ~
-        {args}  (ImpairativeOperationsJumpInBufArgs)
+        {args}  (ImpairativeOperationsJumpInBufArgs)  See |ImpairativeOperationsJumpInBufArgs|
 
     Returns: ~
         (ImpairativeOperations)
@@ -248,13 +248,14 @@ ImpairativeOperations:command_pair({args})
     * Automatically passes the |count| when the mapping is activated with one.
 
     Parameters: ~
-        {args}  (ImpairativeOperationsCommandPairArgs)
+        {args}  (ImpairativeOperationsCommandPairArgs)  See |ImpairativeOperationsCommandPairArgs|
 
     Returns: ~
         (ImpairativeOperations)
 
 
 ImpairativeRangeOp                                          *ImpairativeRangeOp*
+    Parameters for function that runs the operator in |ImpairativeOperations:range_manipulation|.
 
     Fields: ~
         {direction}   ("backward"|"forward")   The direction of the operator that was invoked
@@ -274,7 +275,7 @@ ImpairativeOperationRangeManipulationArgs
         {key}        (string)                        The key for the mapping (will be prefixed by one of the leaders)
         {line_key?}  (string|boolean)                A "motion" for running the operator on the same line
         {desc?}      (ImpairativeDesc)               see |ImpairativeDesc|
-        {fun}        (fun(args:ImpairativeRangeOp))  Performs the operation
+        {fun}        (fun(args:ImpairativeRangeOp))  Performs the operation. See |ImpairativeRangeOp|
 
 
                                       *ImpairativeOperations:range_manipulation*
@@ -287,7 +288,7 @@ ImpairativeOperations:range_manipulation({args})
     If `line_key = true` then the key from the `key` argument will be used.
 
     Parameters: ~
-        {args}  (ImpairativeOperationRangeManipulationArgs)
+        {args}  (ImpairativeOperationRangeManipulationArgs)  See |ImpairativeOperationRangeManipulationArgs|
 
 
                                      *ImpairativeOperationsTextManipulationArgs*
@@ -317,7 +318,7 @@ ImpairativeOperations:text_manipulation({args})
     be used.
 
     Parameters: ~
-        {args}  (ImpairativeOperationsTextManipulationArgs)
+        {args}  (ImpairativeOperationsTextManipulationArgs)  See |ImpairativeOperationsTextManipulationArgs|
 
     Returns: ~
         (ImpairativeOperations)

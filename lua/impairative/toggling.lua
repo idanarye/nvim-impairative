@@ -17,7 +17,7 @@ local ImpairativeToggling = {}
 local ImpairativeTogglingManualArgs
 
 ---Bind toggling mappings by directly specifying the commands for each mapping.
----@param args ImpairativeTogglingManualArgs
+---@param args ImpairativeTogglingManualArgs See |ImpairativeTogglingManualArgs|
 function ImpairativeToggling:manual(args)
     for _, operation in ipairs{'enable', 'disable', 'toggle'} do
         local action = args[operation]
@@ -45,7 +45,7 @@ end
 local ImpairativeTogglingGetterSetterArgs
 
 ---Bind toggling mappings by directly specifying a getter and a setter.
----@param args ImpairativeTogglingGetterSetterArgs
+---@param args ImpairativeTogglingGetterSetterArgs See |ImpairativeTogglingGetterSetterArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:getter_setter(args)
     return self:manual {
@@ -76,7 +76,7 @@ local ImpairativeTogglingFieldArgs
 ---Can also be used for things that use metatables like |lua-vim-variables|,
 ---but if that table is |vim.o| prefer using |ImpairativeToggling:option|
 ---instead.
----@param args ImpairativeTogglingFieldArgs
+---@param args ImpairativeTogglingFieldArgs See |ImpairativeTogglingFieldArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:field(args)
     local name = args.name
@@ -110,7 +110,7 @@ end
 local ImpairativeTogglingOptionArgs
 
 ---Bind toggling mappings for a Neovim option using |vim.o|.
----@param args ImpairativeTogglingOptionArgs
+---@param args ImpairativeTogglingOptionArgs See |ImpairativeTogglingOptionArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:option(args)
     return self:field {
