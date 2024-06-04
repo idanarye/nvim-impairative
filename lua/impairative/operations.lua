@@ -16,12 +16,32 @@ local ImpairativeOperations = {}
 ---  `'move {backward|forward}'`
 ---@alias ImpairativeDesc string | {backward: string, forward: string}
 
+local function validate_desc(desc)
+    local desc_type = type(desc)
+    if desc_type == 'table' then
+        if type(desc.backward) ~= 'string' then
+            return false, '`backward` is missing or not a string'
+        end
+        if type(desc.forward) ~= 'string' then
+            return false, '`forward` is missing or not a string'
+        end
+        return true
+    elseif desc then
+        return desc_type == 'string'
+    else
+        return true
+    end
+end
+
 ---@param desc ImpairativeDesc
 ---@param i integer
 local function process_desc(desc, i)
-    if type(desc) == "table" then
+    if type(desc) == 'table' then
         return desc[({"backward", "forward"})[i]]
     elseif desc then
+        vim.validate {
+            desc = {desc, 'string'}
+        }
         return desc:gsub("{(.-)}", function(m)
             local parts = vim.split(m, '|', {plain = true})
             if #parts == 2 then
@@ -45,6 +65,12 @@ local ImpairativeOperationsFunctionPairArgs
 ---@param args ImpairativeOperationsFunctionPairArgs See |ImpairativeOperationsFunctionPairArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:function_pair(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        desc = {args.desc, validate_desc, 'ImpairativeDesc'},
+        backward = {args.backward, 'callable'},
+        forward = {args.forward, 'callable'},
+    }
     vim.keymap.set('n', self._opts.backward .. args.key, args.backward, {desc = process_desc(args.desc, 1)})
     vim.keymap.set('n', self._opts.forward .. args.key, args.forward, {desc = process_desc(args.desc, 2)})
     return self
@@ -60,6 +86,11 @@ local ImpairativeOperationsUnifiedFunctionArgs
 ---@param args ImpairativeOperationsUnifiedFunctionArgs See |ImpairativeOperationsUnifiedFunctionArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:unified_function(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        desc = {args.desc, validate_desc, 'ImpairativeDesc'},
+        fun = {args.fun, 'callable'},
+    }
     return self:function_pair {
         key = args.key,
         desc = args.desc,
@@ -89,6 +120,12 @@ local ImpairativeOperationsJumpInBufArgs
 ---@param args ImpairativeOperationsJumpInBufArgs See |ImpairativeOperationsJumpInBufArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:jump_in_buf(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        desc = {args.desc, validate_desc, 'ImpairativeDesc'},
+        fun = {args.fun, 'callable'},
+        extreme = {args.extreme, 'table', true},
+    }
     vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.key, function()
         local curosr = vim.api.nvim_win_get_cursor(0)
 
@@ -132,6 +169,10 @@ function ImpairativeOperations:jump_in_buf(args)
     end, {desc = process_desc(args.desc, 2)})
 
     if args.extreme then
+        vim.validate {
+            ['extreme.key'] = {args.extreme.key, 'string'},
+            ['extreme.desc'] = {args.extreme.desc, validate_desc, 'ImpairativeDesc'},
+        }
         vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.extreme.key, function()
             local pos = args.fun():next()
             if pos then
@@ -164,6 +205,11 @@ local ImpairativeOperationsCommandPairArgs
 ---@param args ImpairativeOperationsCommandPairArgs See |ImpairativeOperationsCommandPairArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:command_pair(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        backward = {args.backward, 'string'},
+        forward = {args.forward, 'string'},
+    }
     return self:unified_function {
         key = args.key,
         desc = {
@@ -207,6 +253,12 @@ local ImpairativeOperationRangeManipulationArgs
 ---If `line_key = true` then the key from the `key` argument will be used.
 ---@param args ImpairativeOperationRangeManipulationArgs See |ImpairativeOperationRangeManipulationArgs|
 function ImpairativeOperations:range_manipulation(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        line_key = {args.line_key, {'string', 'boolean'}, true},
+        desc = {args.desc, validate_desc, 'ImpairativeDesc'},
+        fun = {args.fun, 'callable'},
+    }
     local line_key
     if args.line_key == true then
         line_key = args.key
@@ -272,6 +324,13 @@ local ImpairativeOperationsTextManipulationArgs
 ---@param args ImpairativeOperationsTextManipulationArgs See |ImpairativeOperationsTextManipulationArgs|
 ---@return ImpairativeOperations
 function ImpairativeOperations:text_manipulation(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        line_key = {args.line_key, {'string', 'boolean'}, true},
+        desc = {args.desc, validate_desc, 'ImpairativeDesc'},
+        backward = {args.backward, 'callable'},
+        forward = {args.forward, 'callable'},
+    }
     return self:range_manipulation {
         key = args.key,
         line_key = args.line_key,

@@ -1,4 +1,4 @@
-describe('Impairative operations', function()
+describe('Impairative setup', function()
     it('default leaders', function()
         local data = {
             field = false,

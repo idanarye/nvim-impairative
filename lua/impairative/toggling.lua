@@ -19,6 +19,13 @@ local ImpairativeTogglingManualArgs
 ---Bind toggling mappings by directly specifying the commands for each mapping.
 ---@param args ImpairativeTogglingManualArgs See |ImpairativeTogglingManualArgs|
 function ImpairativeToggling:manual(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        name = {args.name, 'string', true},
+        enable = {args.enable, {'string', 'callable'}},
+        disable = {args.disable, {'string', 'callable'}},
+        toggle = {args.toggle, {'string', 'callable'}},
+    }
     for _, operation in ipairs{'enable', 'disable', 'toggle'} do
         local action = args[operation]
         if action then
@@ -48,6 +55,12 @@ local ImpairativeTogglingGetterSetterArgs
 ---@param args ImpairativeTogglingGetterSetterArgs See |ImpairativeTogglingGetterSetterArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:getter_setter(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        name = {args.name, 'string', true},
+        get = {args.get, 'callable'},
+        set = {args.set, 'callable'},
+    }
     return self:manual {
         key = args.key,
         name = args.name,
@@ -79,6 +92,13 @@ local ImpairativeTogglingFieldArgs
 ---@param args ImpairativeTogglingFieldArgs See |ImpairativeTogglingFieldArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:field(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        name = {args.name, 'string', true},
+        table = {args.table, 'table'},
+        field = {args.field, function(f) return f ~= nil end, 'some value'},
+        values = {args.values, 'table', true},
+    }
     local name = args.name
     if name and args.values then
         name = ('%s (on means "%s", off means "%s")'):format(name, args.values[true], args.values[false])
@@ -113,6 +133,11 @@ local ImpairativeTogglingOptionArgs
 ---@param args ImpairativeTogglingOptionArgs See |ImpairativeTogglingOptionArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:option(args)
+    vim.validate {
+        key = {args.key, 'string'},
+        option = {args.option, 'string'},
+        values = {args.values, 'table', true},
+    }
     return self:field {
         key = args.key,
         table = vim.o,

@@ -39,6 +39,11 @@ end
 ---@param opts ImpairativeTogglingOptions See |ImpairativeTogglingOptions|
 ---@return ImpairativeToggling
 function M.toggling(opts)
+    vim.validate {
+        enable = {opts.enable, 'string'},
+        disable = {opts.disable, 'string'},
+        toggle = {opts.toggle, 'string'},
+    }
     return setmetatable({
         _opts = opts,
     }, {
@@ -50,6 +55,10 @@ end
 ---@param opts ImpairativeOperationsOptions See |ImpairativeOperationsOptions|
 ---@return ImpairativeOperations
 function M.operations(opts)
+    vim.validate {
+        backward = {opts.backward, 'string'},
+        forward = {opts.forward, 'string'},
+    }
     return setmetatable({
         _opts = opts,
     }, {
