@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/idanarye/nvim-impairative/compare/v0.1.0...v0.2.0) (2024-06-04)
+
+
+### Features
+
+* Add `ImpairativeToggling:manual` (Close [#2](https://github.com/idanarye/nvim-impairative/issues/2)) ([07ec54b](https://github.com/idanarye/nvim-impairative/commit/07ec54bc37895114ed463bb4004d7f960b0360a4))
+* Add validation for the argument objects passed to the helpers ([cff284f](https://github.com/idanarye/nvim-impairative/commit/cff284f8223b98000dc1e20939385910596a1404))
+* Add vimdocs ([314c704](https://github.com/idanarye/nvim-impairative/commit/314c7045faf7c804ef7564d7c5b5c04d8b29b1e5))
+* Allow using `setup` to generate the keymaps ([cacd341](https://github.com/idanarye/nvim-impairative/commit/cacd341857d67ddab0bf8199bfd1e81cf8bd5952))
+
 ## 0.1.0 (2024-06-01)
 
 
