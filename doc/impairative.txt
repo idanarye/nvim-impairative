@@ -149,17 +149,34 @@ ImpairativeOperations                                    *ImpairativeOperations*
         {_opts}  (ImpairativeOperationsOptions)
 
 
+ImpairativeDesc                                                *ImpairativeDesc*
+    Used to generate descriptions for the keymaps.
+
+    There are two ways to specify the description:
+    * A table with the backward and forward descriptions:
+      `{ backward = 'move backward', forward = 'move forward' }`
+    * Template string:
+      `'move {backward|forward}'`
+
+    Type: ~
+        string|{backward:string,forward:string}
+
+
 ImpairativeOperationsFunctionPairArgs    *ImpairativeOperationsFunctionPairArgs*
 
     Fields: ~
-        {key}       (string)
-        {desc?}     (string|{backward:string,forward:string})
-        {backward}  (fun())
-        {forward}   (fun())
+        {key}       (string)           The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}     (ImpairativeDesc)  see |ImpairativeDesc|
+        {backward}  (fun())            The "backward" operation
+        {forward}   (fun())            The "forward" operation
 
 
                                            *ImpairativeOperations:function_pair*
 ImpairativeOperations:function_pair({args})
+    Bind operation mappings by directly specifying the commands for each direction.
+
+    If the operations are |cmdline| commands, prefer
+    |ImpairativeOperations:command_pair| which also handles |count|.
 
     Parameters: ~
         {args}  (ImpairativeOperationsFunctionPairArgs)
@@ -171,13 +188,14 @@ ImpairativeOperations:function_pair({args})
 ImpairativeOperationsUnifiedFunctionArgs*ImpairativeOperationsUnifiedFunctionArgs*
 
     Fields: ~
-        {key}    (string)
-        {desc?}  (string|{backward:string,forward:string})
-        {fun}    (fun(direction:"backward"|"forward"))
+        {key}    (string)                               The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}  (ImpairativeDesc)                      see |ImpairativeDesc|
+        {fun}    (fun(direction:"backward"|"forward"))  The operation
 
 
                                         *ImpairativeOperations:unified_function*
 ImpairativeOperations:unified_function({args})
+    Bind operation mappings using a function that receives the direction as a parameter.
 
     Parameters: ~
         {args}  (ImpairativeOperationsUnifiedFunctionArgs)
@@ -189,14 +207,21 @@ ImpairativeOperations:unified_function({args})
 ImpairativeOperationsJumpInBufArgs          *ImpairativeOperationsJumpInBufArgs*
 
     Fields: ~
-        {key}       (string)
-        {desc?}     (string|{backward:string,forward:string})
-        {extreme?}  ({key:string,desc?:string|{backward:string,forward:string}})
-        {fun}       (fun():Iter)
+        {key}       (string)                              The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}     (ImpairativeDesc)                     see |ImpairativeDesc|
+        {extreme?}  ({key:string,desc?:ImpairativeDesc})  Also generate mapping to jump to first and last targets
+        {fun}       (fun():Iter)                          Should return a |vim.iter| with all the jump targets in the buffer
 
 
                                              *ImpairativeOperations:jump_in_buf*
 ImpairativeOperations:jump_in_buf({args})
+    Bind operation mappings for jump targets in the current buffer.
+
+    The `fun` argument must return a |vim.iter| which yields tables with four
+    integer fields - `start_line`, `start_col`, `end_line` and `end_col` - where
+    lines are 1-based and columns are 0-based.
+
+    These keymaps can also be used in |Operator-pending-mode|.
 
     Parameters: ~
         {args}  (ImpairativeOperationsJumpInBufArgs)
@@ -208,13 +233,19 @@ ImpairativeOperations:jump_in_buf({args})
 ImpairativeOperationsCommandPairArgs      *ImpairativeOperationsCommandPairArgs*
 
     Fields: ~
-        {key}       (string)
-        {backward}  (string)
-        {forward}   (string)
+        {key}       (string)  The key for the mapping (will be prefixed by one of the leaders)
+        {backward}  (string)  The "backward" command
+        {forward}   (string)  The "forward" command
 
 
                                             *ImpairativeOperations:command_pair*
 ImpairativeOperations:command_pair({args})
+    Bind operation mappings by directly specifying the |cmdline| commands for each direction.
+
+    Unlike |ImpairativeOperations:function_pair|, which uses functions, this
+    helper method:
+    * Automatically generates descriptions based on the commands.
+    * Automatically passes the |count| when the mapping is activated with one.
 
     Parameters: ~
         {args}  (ImpairativeOperationsCommandPairArgs)
@@ -226,28 +257,34 @@ ImpairativeOperations:command_pair({args})
 ImpairativeRangeOp                                          *ImpairativeRangeOp*
 
     Fields: ~
-        {direction}   ("backward"|"forward")
-        {count}       (integer)
-        {count1}      (integer)
-        {range_type}  (string)
-        {start_line}  (integer)
-        {end_line}    (integer)
-        {start_col}   (integer)
-        {end_col}     (integer)
+        {direction}   ("backward"|"forward")   The direction of the operator that was invoked
+        {count}       (integer)                The |v:count| the operator was invoked with
+        {count1}      (integer)                The |v:count1| the operator was invoked with
+        {range_type}  ("line"|"char"|"block")  The range of the motion
+        {start_line}  (integer)                The 1-based line where the motion's selection starts
+        {end_line}    (integer)                The 1-based line where the motion's selection ends
+        {start_col}   (integer)                The 1-based column where the motion's selection starts
+        {end_col}     (integer)                The 1-based column where the motion's selection ends
 
 
                                      *ImpairativeOperationRangeManipulationArgs*
 ImpairativeOperationRangeManipulationArgs
 
     Fields: ~
-        {key}        (string)
-        {line_key?}  (string|boolean)
-        {desc?}      (string|{backward:string,forward:string})
-        {fun}        (fun(args:ImpairativeRangeOp))
+        {key}        (string)                        The key for the mapping (will be prefixed by one of the leaders)
+        {line_key?}  (string|boolean)                A "motion" for running the operator on the same line
+        {desc?}      (ImpairativeDesc)               see |ImpairativeDesc|
+        {fun}        (fun(args:ImpairativeRangeOp))  Performs the operation
 
 
                                       *ImpairativeOperations:range_manipulation*
 ImpairativeOperations:range_manipulation({args})
+    Bind operation mappings that operates on a range in the buffer.
+
+    The range works like a regular Neovim operator - either with a motion after
+    the command or by running it from visual mode. Additionally, if `line_key`
+    is provided, that key can be used to run the operator on the current line.
+    If `line_key = true` then the key from the `key` argument will be used.
 
     Parameters: ~
         {args}  (ImpairativeOperationRangeManipulationArgs)
@@ -257,15 +294,27 @@ ImpairativeOperations:range_manipulation({args})
 ImpairativeOperationsTextManipulationArgs
 
     Fields: ~
-        {key}        (string)
-        {line_key?}  (string|boolean)
-        {desc?}      (string|{backward:string,forward:string})
-        {backward}   (fun(orig:string):string)
-        {forward}    (fun(orig:string):string)
+        {key}        (string)                   The key for the mapping (will be prefixed by one of the leaders)
+        {line_key?}  (string|boolean)           A "motion" for running the operator on the same line
+        {desc?}      (ImpairativeDesc)          see |ImpairativeDesc|
+        {backward}   (fun(orig:string):string)  The "backword" text transform (typically encode)
+        {forward}    (fun(orig:string):string)  The "forward" text transform (typically decode)
 
 
                                        *ImpairativeOperations:text_manipulation*
 ImpairativeOperations:text_manipulation({args})
+    Bind operation mappings that transform text in the buffer.
+
+    Impairative uses the convention set by unimpaired where the backward
+    direction is for encoding and the forward direction is for decoding. This
+    convention, of course, cannot be enforced for user defined mappings - but it
+    is encouraged.
+
+    The text is selected like a regular Neovim operator - either with a motion
+    after the command or by running it from visual mode. Additionally, if
+    `line_key` is provided, that key can be used to run the operator on the
+    current line. If `line_key = true` then the key from the `key` argument will
+    be used.
 
     Parameters: ~
         {args}  (ImpairativeOperationsTextManipulationArgs)

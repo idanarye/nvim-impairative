@@ -7,13 +7,17 @@ local ImpairativeOperationsOptions
 ---@field _opts ImpairativeOperationsOptions
 local ImpairativeOperations = {}
 
----@class ImpairativeOperationsFunctionPairArgs
----@field key string
----@field desc? string | {backward: string, forward: string}
----@field backward fun()
----@field forward fun()
-local ImpairativeOperationsFunctionPairArgs
+---Used to generate descriptions for the keymaps.
+---
+---There are two ways to specify the description:
+---* A table with the backward and forward descriptions:
+---  `{ backward = 'move backward', forward = 'move forward' }`
+---* Template string:
+---  `'move {backward|forward}'`
+---@alias ImpairativeDesc string | {backward: string, forward: string}
 
+---@param desc ImpairativeDesc
+---@param i integer
 local function process_desc(desc, i)
     if type(desc) == "table" then
         return desc[({"backward", "forward"})[i]]
@@ -27,6 +31,17 @@ local function process_desc(desc, i)
     end
 end
 
+---@class ImpairativeOperationsFunctionPairArgs
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field backward fun() The "backward" operation
+---@field forward fun() The "forward" operation
+local ImpairativeOperationsFunctionPairArgs
+
+---Bind operation mappings by directly specifying the commands for each direction.
+---
+---If the operations are |cmdline| commands, prefer
+---|ImpairativeOperations:command_pair| which also handles |count|.
 ---@param args ImpairativeOperationsFunctionPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:function_pair(args)
@@ -36,11 +51,12 @@ function ImpairativeOperations:function_pair(args)
 end
 
 ---@class ImpairativeOperationsUnifiedFunctionArgs
----@field key string
----@field desc? string | {backward: string, forward: string}
----@field fun fun(direction: 'backward'|'forward')
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field fun fun(direction: 'backward'|'forward') The operation
 local ImpairativeOperationsUnifiedFunctionArgs
 
+---Bind operation mappings using a function that receives the direction as a parameter.
 ---@param args ImpairativeOperationsUnifiedFunctionArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:unified_function(args)
@@ -57,12 +73,19 @@ function ImpairativeOperations:unified_function(args)
 end
 
 ---@class ImpairativeOperationsJumpInBufArgs
----@field key string
----@field desc? string | {backward: string, forward: string}
----@field extreme? {key: string, desc?: string | {backward: string, forward: string}}
----@field fun fun(): Iter
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field extreme? {key: string, desc?: ImpairativeDesc} Also generate mapping to jump to first and last targets
+---@field fun fun(): Iter Should return a |vim.iter| with all the jump targets in the buffer
 local ImpairativeOperationsJumpInBufArgs
 
+---Bind operation mappings for jump targets in the current buffer.
+---
+---The `fun` argument must return a |vim.iter| which yields tables with four
+---integer fields - `start_line`, `start_col`, `end_line` and `end_col` - where
+---lines are 1-based and columns are 0-based.
+---
+---These keymaps can also be used in |Operator-pending-mode|.
 ---@param args ImpairativeOperationsJumpInBufArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:jump_in_buf(args)
@@ -127,11 +150,17 @@ function ImpairativeOperations:jump_in_buf(args)
 end
 
 ---@class ImpairativeOperationsCommandPairArgs
----@field key string
----@field backward string
----@field forward string
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field backward string The "backward" command
+---@field forward string The "forward" command
 local ImpairativeOperationsCommandPairArgs
 
+---Bind operation mappings by directly specifying the |cmdline| commands for each direction.
+---
+---Unlike |ImpairativeOperations:function_pair|, which uses functions, this
+---helper method:
+---* Automatically generates descriptions based on the commands.
+---* Automatically passes the |count| when the mapping is activated with one.
 ---@param args ImpairativeOperationsCommandPairArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:command_pair(args)
@@ -149,29 +178,32 @@ function ImpairativeOperations:command_pair(args)
             vim.cmd(cmd)
         end
     }
-    --vim.keymap.set('n', self._opts.backward .. args.key, '<Cmd>' .. args.backward .. '<Cr>')
-    --vim.keymap.set('n', self._opts.forward .. args.key, '<Cmd>' .. args.forward .. '<Cr>')
-    --return self
 end
 
 ---@class ImpairativeRangeOp
----@field direction 'backward'|'forward'
----@field count integer
----@field count1 integer
----@field range_type string
----@field start_line integer
----@field end_line integer
----@field start_col integer
----@field end_col integer
+---@field direction 'backward'|'forward' The direction of the operator that was invoked
+---@field count integer The |v:count| the operator was invoked with
+---@field count1 integer The |v:count1| the operator was invoked with
+---@field range_type 'line'|'char'|'block' The range of the motion
+---@field start_line integer The 1-based line where the motion's selection starts
+---@field end_line integer The 1-based line where the motion's selection ends
+---@field start_col integer The 1-based column where the motion's selection starts
+---@field end_col integer The 1-based column where the motion's selection ends
 local ImpairativeRangeOp
 
 ---@class ImpairativeOperationRangeManipulationArgs
----@field key string
----@field line_key? string|boolean
----@field desc? string | {backward: string, forward: string}
----@field fun fun(args: ImpairativeRangeOp)
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field line_key? string|boolean A "motion" for running the operator on the same line
+---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field fun fun(args: ImpairativeRangeOp) Performs the operation
 local ImpairativeOperationRangeManipulationArgs
 
+---Bind operation mappings that operates on a range in the buffer.
+---
+---The range works like a regular Neovim operator - either with a motion after
+---the command or by running it from visual mode. Additionally, if `line_key`
+---is provided, that key can be used to run the operator on the current line.
+---If `line_key = true` then the key from the `key` argument will be used.
 ---@param args ImpairativeOperationRangeManipulationArgs
 function ImpairativeOperations:range_manipulation(args)
     local line_key
@@ -217,13 +249,25 @@ function ImpairativeOperations:range_manipulation(args)
 end
 
 ---@class ImpairativeOperationsTextManipulationArgs
----@field key string
----@field line_key? string|boolean
----@field desc? string | {backward: string, forward: string}
----@field backward fun(orig: string): string
----@field forward fun(orig: string): string
+---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field line_key? string|boolean A "motion" for running the operator on the same line
+---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field backward fun(orig: string): string The "backword" text transform (typically encode)
+---@field forward fun(orig: string): string The "forward" text transform (typically decode)
 local ImpairativeOperationsTextManipulationArgs
 
+---Bind operation mappings that transform text in the buffer.
+---
+---Impairative uses the convention set by unimpaired where the backward
+---direction is for encoding and the forward direction is for decoding. This
+---convention, of course, cannot be enforced for user defined mappings - but it
+---is encouraged.
+---
+---The text is selected like a regular Neovim operator - either with a motion
+---after the command or by running it from visual mode. Additionally, if
+---`line_key` is provided, that key can be used to run the operator on the
+---current line. If `line_key = true` then the key from the `key` argument will
+---be used.
 ---@param args ImpairativeOperationsTextManipulationArgs
 ---@return ImpairativeOperations
 function ImpairativeOperations:text_manipulation(args)
