@@ -60,14 +60,15 @@ ImpairativeToggling                                        *ImpairativeToggling*
 ImpairativeTogglingManualArgs                    *ImpairativeTogglingManualArgs*
 
     Fields: ~
-        {key}      (string)
-        {name?}    (string)
-        {enable}   (string|fun())
-        {disable}  (string|fun())
-        {toggle}   (string|fun())
+        {key}      (string)        The key for the mapping (will be prefixed by one of the leaders)
+        {name?}    (string)        A name for generating mapping descriptions
+        {enable}   (string|fun())  Command or function for the enable mapping
+        {disable}  (string|fun())  Command or function for the disable mapping
+        {toggle}   (string|fun())  Command or function for the toggle mapping
 
 
 ImpairativeToggling:manual({args})                  *ImpairativeToggling:manual*
+    Bind toggling mappings by directly specifying the commands for each mapping.
 
     Parameters: ~
         {args}  (ImpairativeTogglingManualArgs)
@@ -76,14 +77,15 @@ ImpairativeToggling:manual({args})                  *ImpairativeToggling:manual*
 ImpairativeTogglingGetterSetterArgs        *ImpairativeTogglingGetterSetterArgs*
 
     Fields: ~
-        {key}    (string)
-        {name?}  (string)
-        {get}    (fun():boolean)
-        {set}    (fun(value:boolean))
+        {key}    (string)              The key for the mapping (will be prefixed by one of the leaders)
+        {name?}  (string)              A name for generating mapping descriptions
+        {get}    (fun():boolean)       Checks if the toggleable thing is on or off
+        {set}    (fun(value:boolean))  Sets the value of the toggleable thing
 
 
                                              *ImpairativeToggling:getter_setter*
 ImpairativeToggling:getter_setter({args})
+    Bind toggling mappings by directly specifying a getter and a setter.
 
     Parameters: ~
         {args}  (ImpairativeTogglingGetterSetterArgs)
@@ -92,10 +94,22 @@ ImpairativeToggling:getter_setter({args})
         (ImpairativeToggling)
 
 
-                                                                              **
+ImpairativeTogglingFieldArgs                      *ImpairativeTogglingFieldArgs*
+
+    Fields: ~
+        {key}      (string)         The key for the mapping (will be prefixed by one of the leaders)
+        {name?}    (string)         A name for generating mapping descriptions
+        {table}    (table)          The Lua table that contains the field to toggle
+        {field}    (any)            The name of the field in the Lua table
+        {values?}  ({boolean:any})  Use when the field is not not using boolean (e.g. `{[true] = 'on', [false] = 'off'}`)
 
 
 ImpairativeToggling:field({args})                    *ImpairativeToggling:field*
+    Bind toggling mappings for a field in a Lua table.
+
+    Can also be used for things that use metatables like |lua-vim-variables|,
+    but if that table is |vim.o| prefer using |ImpairativeToggling:option|
+    instead.
 
     Parameters: ~
         {args}  (ImpairativeTogglingFieldArgs)
@@ -104,10 +118,16 @@ ImpairativeToggling:field({args})                    *ImpairativeToggling:field*
         (ImpairativeToggling)
 
 
-                                                                              **
+ImpairativeTogglingOptionArgs                    *ImpairativeTogglingOptionArgs*
+
+    Fields: ~
+        {key}      (string)         The key for the mapping (will be prefixed by one of the leaders)
+        {option}   (string)         The name of the Neovim option
+        {values?}  ({boolean:any})  Use when the field is not not using boolean (e.g. `{[true] = 'on', [false] = 'off'}`)
 
 
 ImpairativeToggling:option({args})                  *ImpairativeToggling:option*
+    Bind toggling mappings for a Neovim option using |vim.o|.
 
     Parameters: ~
         {args}  (ImpairativeTogglingOptionArgs)
