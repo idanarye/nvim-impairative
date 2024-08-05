@@ -221,10 +221,11 @@ function ImpairativeOperations:command_pair(args)
             if 0 < vim.v.count then
                 cmd = vim.v.count .. cmd
             end
-            local ok, result = pcall(function() vim.cmd(cmd) end)
+            local ok, result = pcall(vim.cmd[cmd])
             if not ok then
-              result = tostring(result):match"E%d*:.+"
-              vim.notify(result, vim.log.levels.ERROR)
+                result = tostring(result)
+                result = result:match"E%d*:.+" or result
+                vim.api.nvim_err_writeln(result)
             end
         end
     }
