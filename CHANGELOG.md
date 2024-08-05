@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/idanarye/nvim-impairative/compare/v0.2.0...v0.3.0) (2024-08-05)
+
+
+### Features
+
+* Improve `command_pair` error reporting ([44b3710](https://github.com/idanarye/nvim-impairative/commit/44b3710513b0b3f106ca639b47031182dff6d629))
+
 ## [0.2.0](https://github.com/idanarye/nvim-impairative/compare/v0.1.0...v0.2.0) (2024-06-04)
 
 
