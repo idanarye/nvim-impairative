@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/idanarye/nvim-impairative/compare/v0.3.0...v0.3.1) (2024-08-08)
+
+
+### Bug Fixes
+
+* using command_pair with a count looks up non-existing commands ([749bf54](https://github.com/idanarye/nvim-impairative/commit/749bf54ae5f8e987a2f773bd5b4b27cb251a1eca))
+
 ## [0.3.0](https://github.com/idanarye/nvim-impairative/compare/v0.2.0...v0.3.0) (2024-08-05)
 
 
