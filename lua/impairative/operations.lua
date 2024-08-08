@@ -221,7 +221,7 @@ function ImpairativeOperations:command_pair(args)
             if 0 < vim.v.count then
                 cmd = vim.v.count .. cmd
             end
-            local ok, result = pcall(vim.cmd[cmd])
+            local ok, result = pcall(vim.cmd, cmd)
             if not ok then
                 result = tostring(result)
                 result = result:match"E%d*:.+" or result
