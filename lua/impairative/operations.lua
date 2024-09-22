@@ -51,9 +51,25 @@ local function process_desc(desc, i)
     end
 end
 
+local function maybe_with_better_n(args, callbacks)
+    if not args.better_n then
+        return callbacks
+    else
+        local wrapper = require('better-n').create {
+            previous = callbacks.backward,
+            next = callbacks.forward,
+        }
+        return {
+            backward = wrapper.previous,
+            forward = wrapper.next,
+        }
+    end
+end
+
 ---@class ImpairativeOperationsFunctionPairArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field better_n? boolean Whether to integrate with better-n
 ---@field backward fun() The "backward" operation
 ---@field forward fun() The "forward" operation
 local ImpairativeOperationsFunctionPairArgs
@@ -71,14 +87,16 @@ function ImpairativeOperations:function_pair(args)
         backward = {args.backward, 'callable'},
         forward = {args.forward, 'callable'},
     }
-    vim.keymap.set('n', self._opts.backward .. args.key, args.backward, {desc = process_desc(args.desc, 1)})
-    vim.keymap.set('n', self._opts.forward .. args.key, args.forward, {desc = process_desc(args.desc, 2)})
+    local callbacks = maybe_with_better_n(args, { backward = args.backward, forward = args.forward })
+    vim.keymap.set('n', self._opts.backward .. args.key, callbacks.backward, {desc = process_desc(args.desc, 1)})
+    vim.keymap.set('n', self._opts.forward .. args.key, callbacks.forward, {desc = process_desc(args.desc, 2)})
     return self
 end
 
 ---@class ImpairativeOperationsUnifiedFunctionArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
+---@field better_n? boolean Whether to integrate with better-n
 ---@field fun fun(direction: 'backward'|'forward') The operation
 local ImpairativeOperationsUnifiedFunctionArgs
 
@@ -94,6 +112,7 @@ function ImpairativeOperations:unified_function(args)
     return self:function_pair {
         key = args.key,
         desc = args.desc,
+        better_n = args.better_n,
         backward = function()
             return args.fun('backward')
         end,
@@ -107,6 +126,7 @@ end
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
 ---@field extreme? {key: string, desc?: ImpairativeDesc} Also generate mapping to jump to first and last targets
+---@field better_n? boolean Whether to integrate with better-n
 ---@field fun fun(): Iter Should return a |vim.iter| with all the jump targets in the buffer
 local ImpairativeOperationsJumpInBufArgs
 
@@ -126,47 +146,51 @@ function ImpairativeOperations:jump_in_buf(args)
         fun = {args.fun, 'callable'},
         extreme = {args.extreme, 'table', true},
     }
-    vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.key, function()
-        local curosr = vim.api.nvim_win_get_cursor(0)
+    local callbacks = maybe_with_better_n(args, {
+        backward = function()
+            local curosr = vim.api.nvim_win_get_cursor(0)
 
-        -- Note: prevs is zero-based because otherwise modulo math becomes too weird.
-        local prevs = {i = 0}
-        for pos in args.fun() do
-            if curosr[1] < pos.end_line then
-                break
-            elseif curosr[1] == pos.end_line and curosr[2] < pos.end_col then
-                break
+            -- Note: prevs is zero-based because otherwise modulo math becomes too weird.
+            local prevs = {i = 0}
+            for pos in args.fun() do
+                if curosr[1] < pos.end_line then
+                    break
+                elseif curosr[1] == pos.end_line and curosr[2] < pos.end_col then
+                    break
+                end
+                prevs[prevs.i] = pos
+                prevs.i = (prevs.i + 1) % vim.v.count1
             end
-            prevs[prevs.i] = pos
-            prevs.i = (prevs.i + 1) % vim.v.count1
-        end
-        if prevs[0] == nil then
-            return
-        end
-        if prevs[vim.v.count1 - 1] == nil then
-            vim.api.nvim_win_set_cursor(0, {prevs[0].end_line, prevs[0].end_col - 1})
-        else
-            vim.api.nvim_win_set_cursor(0, {prevs[prevs.i].end_line, prevs[prevs.i].end_col - 1})
-        end
-    end, {desc = process_desc(args.desc, 1)})
-    vim.keymap.set({'n', 'x', 'o'}, self._opts.forward .. args.key, function()
-        local curosr = vim.api.nvim_win_get_cursor(0)
-
-        local pos = args.fun()
-        :filter(function(pos)
-            if curosr[1] < pos.start_line then
-                return true
-            elseif curosr[1] == pos.start_line and curosr[2] < pos.start_col then
-                return true
+            if prevs[0] == nil then
+                return
+            end
+            if prevs[vim.v.count1 - 1] == nil then
+                vim.api.nvim_win_set_cursor(0, {prevs[0].end_line, prevs[0].end_col - 1})
             else
-                return false
+                vim.api.nvim_win_set_cursor(0, {prevs[prevs.i].end_line, prevs[prevs.i].end_col - 1})
             end
-        end)
-        :nth(vim.v.count1)
-        if pos then
-            vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
-        end
-    end, {desc = process_desc(args.desc, 2)})
+        end,
+        forward = function()
+            local curosr = vim.api.nvim_win_get_cursor(0)
+
+            local pos = args.fun()
+                :filter(function(pos)
+                    if curosr[1] < pos.start_line then
+                        return true
+                    elseif curosr[1] == pos.start_line and curosr[2] < pos.start_col then
+                        return true
+                    else
+                        return false
+                    end
+                end)
+                :nth(vim.v.count1)
+            if pos then
+                vim.api.nvim_win_set_cursor(0, {pos.start_line, pos.start_col})
+            end
+        end,
+    })
+    vim.keymap.set({'n', 'x', 'o'}, self._opts.backward .. args.key, callbacks.backward, {desc = process_desc(args.desc, 1)})
+    vim.keymap.set({'n', 'x', 'o'}, self._opts.forward .. args.key, callbacks.forward, {desc = process_desc(args.desc, 2)})
 
     if args.extreme then
         vim.validate {
@@ -192,6 +216,7 @@ end
 
 ---@class ImpairativeOperationsCommandPairArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
+---@field better_n? boolean Whether to integrate with better-n
 ---@field backward string The "backward" command
 ---@field forward string The "forward" command
 local ImpairativeOperationsCommandPairArgs
@@ -212,6 +237,7 @@ function ImpairativeOperations:command_pair(args)
     }
     return self:unified_function {
         key = args.key,
+        better_n = args.better_n,
         desc = {
             backward = ('Run the "%s" command'):format(args.backward),
             forward = ('Run the "%s" command'):format(args.forward),

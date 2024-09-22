@@ -318,6 +318,23 @@ Impairative's version of the keymaps has several differences from unimpaired's b
 * unimpaired's `[n` and `]n` work as a text object when used after an operator. Imerative's version of them works as one would expect - regular motions.
 * Impairative, unlike unimpaired, has a `[N` and `]N` version that jumps to the first and last conflict markers.
 
+[BETTER-N](https://github.com/jonatan-branting/nvim-better-n) INTEGRATION
+-------------------------------------------------------------------------
+
+Operations may be integrated with the better-n plugin by setting `better_n`:
+
+```lua
+require'impairative'.operations { ... }
+:command_pair {
+    key = 'q',
+    backward = 'cprevious',
+    forward = 'cnext',
+    better_n = true,
+}
+```
+
+When the mapping is used, `n` and `N` will be bound to the forward and backward operations respectively. Note that the integration is only available for `function_pair`, `unified_pair`, `jump_in_buf`, and `command_pair` operations since it has no useful interpretation for editing operations. Furthermore, the better-n plugin has to installed to enable this functionality.
+
 CONFIGURING WITH SETUP
 ----------------------
 
@@ -325,7 +342,7 @@ To support lazy.vim's `opts =` configuration style, Impairative's `setup` functi
 
 ```lua
 -- ***********************************
--- *     I M P O R T A N T ! ! !     * 
+-- *     I M P O R T A N T ! ! !     *
 -- *                                 *
 -- * These are **NOT** the defaults! *
 -- * The defaults are to do nothing. *

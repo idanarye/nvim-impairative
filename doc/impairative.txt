@@ -165,10 +165,11 @@ ImpairativeDesc                                                *ImpairativeDesc*
 ImpairativeOperationsFunctionPairArgs    *ImpairativeOperationsFunctionPairArgs*
 
     Fields: ~
-        {key}       (string)           The key for the mapping (will be prefixed by one of the leaders)
-        {desc?}     (ImpairativeDesc)  see |ImpairativeDesc|
-        {backward}  (fun())            The "backward" operation
-        {forward}   (fun())            The "forward" operation
+        {key}        (string)           The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}      (ImpairativeDesc)  see |ImpairativeDesc|
+        {better_n?}  (boolean)          Whether to integrate with better-n
+        {backward}   (fun())            The "backward" operation
+        {forward}    (fun())            The "forward" operation
 
 
                                            *ImpairativeOperations:function_pair*
@@ -188,9 +189,10 @@ ImpairativeOperations:function_pair({args})
 ImpairativeOperationsUnifiedFunctionArgs*ImpairativeOperationsUnifiedFunctionArgs*
 
     Fields: ~
-        {key}    (string)                               The key for the mapping (will be prefixed by one of the leaders)
-        {desc?}  (ImpairativeDesc)                      see |ImpairativeDesc|
-        {fun}    (fun(direction:"backward"|"forward"))  The operation
+        {key}        (string)                               The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}      (ImpairativeDesc)                      see |ImpairativeDesc|
+        {better_n?}  (boolean)                              Whether to integrate with better-n
+        {fun}        (fun(direction:"backward"|"forward"))  The operation
 
 
                                         *ImpairativeOperations:unified_function*
@@ -207,10 +209,11 @@ ImpairativeOperations:unified_function({args})
 ImpairativeOperationsJumpInBufArgs          *ImpairativeOperationsJumpInBufArgs*
 
     Fields: ~
-        {key}       (string)                              The key for the mapping (will be prefixed by one of the leaders)
-        {desc?}     (ImpairativeDesc)                     see |ImpairativeDesc|
-        {extreme?}  ({key:string,desc?:ImpairativeDesc})  Also generate mapping to jump to first and last targets
-        {fun}       (fun():Iter)                          Should return a |vim.iter| with all the jump targets in the buffer
+        {key}        (string)                              The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}      (ImpairativeDesc)                     see |ImpairativeDesc|
+        {extreme?}   ({key:string,desc?:ImpairativeDesc})  Also generate mapping to jump to first and last targets
+        {better_n?}  (boolean)                             Whether to integrate with better-n
+        {fun}        (fun():Iter)                          Should return a |vim.iter| with all the jump targets in the buffer
 
 
                                              *ImpairativeOperations:jump_in_buf*
@@ -233,9 +236,10 @@ ImpairativeOperations:jump_in_buf({args})
 ImpairativeOperationsCommandPairArgs      *ImpairativeOperationsCommandPairArgs*
 
     Fields: ~
-        {key}       (string)  The key for the mapping (will be prefixed by one of the leaders)
-        {backward}  (string)  The "backward" command
-        {forward}   (string)  The "forward" command
+        {key}        (string)   The key for the mapping (will be prefixed by one of the leaders)
+        {better_n?}  (boolean)  Whether to integrate with better-n
+        {backward}   (string)   The "backward" command
+        {forward}    (string)   The "forward" command
 
 
                                             *ImpairativeOperations:command_pair*
