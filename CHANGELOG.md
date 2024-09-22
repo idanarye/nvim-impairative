@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/idanarye/nvim-impairative/compare/v0.3.1...v0.4.0) (2024-09-22)
+
+
+### Features
+
+* integrate better-n ([1d99a9b](https://github.com/idanarye/nvim-impairative/commit/1d99a9be7dae7ecf1f0a14cacb70e01c6fc9961a))
+
 ## [0.3.1](https://github.com/idanarye/nvim-impairative/compare/v0.3.0...v0.3.1) (2024-08-08)
 
 
