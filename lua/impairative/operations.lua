@@ -51,6 +51,9 @@ local function process_desc(desc, i)
     end
 end
 
+---@param args table operation options
+---@param callbacks { backward: fun(), forward: fun() } callbacks to be wrapped
+---@return { backward: fun(), forward: fun() }
 local function maybe_with_better_n(args, callbacks)
     if not args.better_n then
         return callbacks
@@ -86,6 +89,7 @@ function ImpairativeOperations:function_pair(args)
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         backward = {args.backward, 'callable'},
         forward = {args.forward, 'callable'},
+        better_n = {args.better_n, 'boolean', true}
     }
     local callbacks = maybe_with_better_n(args, { backward = args.backward, forward = args.forward })
     vim.keymap.set('n', self._opts.backward .. args.key, callbacks.backward, {desc = process_desc(args.desc, 1)})
@@ -108,6 +112,7 @@ function ImpairativeOperations:unified_function(args)
         key = {args.key, 'string'},
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         fun = {args.fun, 'callable'},
+        better_n = {args.better_n, 'boolean', true}
     }
     return self:function_pair {
         key = args.key,
@@ -145,6 +150,7 @@ function ImpairativeOperations:jump_in_buf(args)
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         fun = {args.fun, 'callable'},
         extreme = {args.extreme, 'table', true},
+        better_n = {args.better_n, 'boolean', true}
     }
     local callbacks = maybe_with_better_n(args, {
         backward = function()
