@@ -1,6 +1,7 @@
 ---@class ImpairativeOperationsOptions
 ---@field backward string Leader keys for turning the operation backward
 ---@field forward string Leader keys for running the operation forward
+---@field better_n? ImpairativeBetterNArgs Settings for better-n
 local ImpairativeOperationsOptions
 
 ---@class ImpairativeOperations
@@ -51,20 +52,39 @@ local function process_desc(desc, i)
     end
 end
 
----@param args table operation options
+---@param args boolean|ImpairativeBetterNArgs toggle or arguments for better-n
+---@param default_args ImpairativeBetterNArgs default better-n arguments
 ---@param callbacks { backward: fun(), forward: fun() } callbacks to be wrapped
 ---@return { backward: fun(), forward: fun() }
-local function maybe_with_better_n(args, callbacks)
-    if not args.better_n then
+local function maybe_with_better_n(args, default_args, callbacks)
+    if not args then
         return callbacks
+    end
+
+    if type(args) == 'boolean' then
+        args = default_args
     else
-        local wrapper = require('better-n').create {
-            previous = callbacks.backward,
-            next = callbacks.forward,
+        args = vim.tbl_extend('force', default_args, args)
+    end
+
+    local better_n = require 'better-n'
+    local forward_wrapper = better_n.create {
+        previous = callbacks.backward,
+        next = callbacks.forward,
+    }
+    if args.relative_direction then
+        return {
+            backward = forward_wrapper.previous,
+            forward = forward_wrapper.next,
+        }
+    else
+        local backward_wrapper = better_n.create {
+            previous = callbacks.forward,
+            next = callbacks.backward,
         }
         return {
-            backward = wrapper.previous,
-            forward = wrapper.next,
+            backward = backward_wrapper.next,
+            forward = forward_wrapper.next,
         }
     end
 end
@@ -72,7 +92,7 @@ end
 ---@class ImpairativeOperationsFunctionPairArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
----@field better_n? boolean Whether to integrate with better-n
+---@field better_n? ImpairativeBetterNArgs|boolean Whether to integrate with better-n
 ---@field backward fun() The "backward" operation
 ---@field forward fun() The "forward" operation
 local ImpairativeOperationsFunctionPairArgs
@@ -89,9 +109,12 @@ function ImpairativeOperations:function_pair(args)
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         backward = {args.backward, 'callable'},
         forward = {args.forward, 'callable'},
-        better_n = {args.better_n, 'boolean', true}
+        better_n = {args.better_n, { 'boolean', 'table' }, true}
     }
-    local callbacks = maybe_with_better_n(args, { backward = args.backward, forward = args.forward })
+    local callbacks = maybe_with_better_n(args.better_n, self._opts.better_n, {
+        backward = args.backward,
+        forward = args.forward,
+    })
     vim.keymap.set('n', self._opts.backward .. args.key, callbacks.backward, {desc = process_desc(args.desc, 1)})
     vim.keymap.set('n', self._opts.forward .. args.key, callbacks.forward, {desc = process_desc(args.desc, 2)})
     return self
@@ -100,7 +123,7 @@ end
 ---@class ImpairativeOperationsUnifiedFunctionArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
----@field better_n? boolean Whether to integrate with better-n
+---@field better_n? ImpairativeBetterNArgs|boolean Whether to integrate with better-n
 ---@field fun fun(direction: 'backward'|'forward') The operation
 local ImpairativeOperationsUnifiedFunctionArgs
 
@@ -112,7 +135,7 @@ function ImpairativeOperations:unified_function(args)
         key = {args.key, 'string'},
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         fun = {args.fun, 'callable'},
-        better_n = {args.better_n, 'boolean', true}
+        better_n = {args.better_n, { 'boolean', 'table' }, true}
     }
     return self:function_pair {
         key = args.key,
@@ -131,7 +154,7 @@ end
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
 ---@field desc? ImpairativeDesc see |ImpairativeDesc|
 ---@field extreme? {key: string, desc?: ImpairativeDesc} Also generate mapping to jump to first and last targets
----@field better_n? boolean Whether to integrate with better-n
+---@field better_n? ImpairativeBetterNArgs|boolean Whether to integrate with better-n
 ---@field fun fun(): Iter Should return a |vim.iter| with all the jump targets in the buffer
 local ImpairativeOperationsJumpInBufArgs
 
@@ -150,9 +173,9 @@ function ImpairativeOperations:jump_in_buf(args)
         desc = {args.desc, validate_desc, 'ImpairativeDesc'},
         fun = {args.fun, 'callable'},
         extreme = {args.extreme, 'table', true},
-        better_n = {args.better_n, 'boolean', true}
+        better_n = {args.better_n, { 'boolean', 'table' }, true}
     }
-    local callbacks = maybe_with_better_n(args, {
+    local callbacks = maybe_with_better_n(args.better_n, self._opts.better_n, {
         backward = function()
             local curosr = vim.api.nvim_win_get_cursor(0)
 
@@ -222,7 +245,7 @@ end
 
 ---@class ImpairativeOperationsCommandPairArgs
 ---@field key string The key for the mapping (will be prefixed by one of the leaders)
----@field better_n? boolean Whether to integrate with better-n
+---@field better_n? ImpairativeBetterNArgs|boolean Whether to integrate with better-n
 ---@field backward string The "backward" command
 ---@field forward string The "forward" command
 local ImpairativeOperationsCommandPairArgs
