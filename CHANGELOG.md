@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/idanarye/nvim-impairative/compare/v0.4.0...v0.5.0) (2024-10-05)
+
+
+### Features
+
+* **better-n:** remap `N` relative to the direction ([2b3c4df](https://github.com/idanarye/nvim-impairative/commit/2b3c4df86f4a4f36e1656c0a1c1cf722b46ec74a))
+* type annotations and validation for better-n ([0e55a82](https://github.com/idanarye/nvim-impairative/commit/0e55a82c049e45a22c387418db60ebdcf22d8323))
+
 ## [0.4.0](https://github.com/idanarye/nvim-impairative/compare/v0.3.1...v0.4.0) (2024-09-22)
 
 
