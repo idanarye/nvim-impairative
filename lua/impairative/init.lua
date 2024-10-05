@@ -10,7 +10,12 @@ local M = {}
 ---@field forward? string Leader keys for running the operation forward in `operations` keymaps
 ---@field operations? fun(helper: ImpairativeOperations) Define mappings with the supplied |ImpairativeOperations|
 ---@field replicate_unimpaired? boolean Create (almost) the same mappings vim-unimpaired creates
+---@field better_n? ImpairativeBetterNArgs Settings for better-n
 local ImpairativeSetupArgs
+
+---@class ImpairativeBetterNArgs
+---@field relative_direction? boolean Whether to remap `N` relative to the initial direction
+local ImpairativeBetterNArgs
 
 ---Configure keymaps
 ---
@@ -28,6 +33,8 @@ function M.setup(args)
         args.operations(M.operations {
             backward = args.backward or '[',
             forward = args.forward or ']',
+            -- Default options for the better-n integration
+            better_n = args.better_n or { relative_direction = true }
         })
     end
     if args.replicate_unimpaired then
@@ -58,6 +65,7 @@ function M.operations(opts)
     vim.validate {
         backward = {opts.backward, 'string'},
         forward = {opts.forward, 'string'},
+        better_n = {opts.better_n, 'table', true}
     }
     return setmetatable({
         _opts = opts,

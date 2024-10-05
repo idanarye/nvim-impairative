@@ -12,6 +12,13 @@ ImpairativeSetupArgs                                      *ImpairativeSetupArgs*
         {forward?}               (string)                             Leader keys for running the operation forward in `operations` keymaps
         {operations?}            (fun(helper:ImpairativeOperations))  Define mappings with the supplied |ImpairativeOperations|
         {replicate_unimpaired?}  (boolean)                            Create (almost) the same mappings vim-unimpaired creates
+        {better_n?}              (ImpairativeBetterNArgs)             Settings for better-n
+
+
+ImpairativeBetterNArgs                                  *ImpairativeBetterNArgs*
+
+    Fields: ~
+        {relative_direction?}  (boolean)  Whether to remap `N` relative to the initial direction
 
 
 M.setup({args})                                              *impairative.setup*
@@ -139,8 +146,9 @@ ImpairativeToggling:option({args})                  *ImpairativeToggling:option*
 ImpairativeOperationsOptions                      *ImpairativeOperationsOptions*
 
     Fields: ~
-        {backward}  (string)  Leader keys for turning the operation backward
-        {forward}   (string)  Leader keys for running the operation forward
+        {backward}   (string)                  Leader keys for turning the operation backward
+        {forward}    (string)                  Leader keys for running the operation forward
+        {better_n?}  (ImpairativeBetterNArgs)  Settings for better-n
 
 
 ImpairativeOperations                                    *ImpairativeOperations*
@@ -165,11 +173,11 @@ ImpairativeDesc                                                *ImpairativeDesc*
 ImpairativeOperationsFunctionPairArgs    *ImpairativeOperationsFunctionPairArgs*
 
     Fields: ~
-        {key}        (string)           The key for the mapping (will be prefixed by one of the leaders)
-        {desc?}      (ImpairativeDesc)  see |ImpairativeDesc|
-        {better_n?}  (boolean)          Whether to integrate with better-n
-        {backward}   (fun())            The "backward" operation
-        {forward}    (fun())            The "forward" operation
+        {key}        (string)                          The key for the mapping (will be prefixed by one of the leaders)
+        {desc?}      (ImpairativeDesc)                 see |ImpairativeDesc|
+        {better_n?}  (ImpairativeBetterNArgs|boolean)  Whether to integrate with better-n
+        {backward}   (fun())                           The "backward" operation
+        {forward}    (fun())                           The "forward" operation
 
 
                                            *ImpairativeOperations:function_pair*
@@ -191,7 +199,7 @@ ImpairativeOperationsUnifiedFunctionArgs*ImpairativeOperationsUnifiedFunctionArg
     Fields: ~
         {key}        (string)                               The key for the mapping (will be prefixed by one of the leaders)
         {desc?}      (ImpairativeDesc)                      see |ImpairativeDesc|
-        {better_n?}  (boolean)                              Whether to integrate with better-n
+        {better_n?}  (ImpairativeBetterNArgs|boolean)       Whether to integrate with better-n
         {fun}        (fun(direction:"backward"|"forward"))  The operation
 
 
@@ -212,7 +220,7 @@ ImpairativeOperationsJumpInBufArgs          *ImpairativeOperationsJumpInBufArgs*
         {key}        (string)                              The key for the mapping (will be prefixed by one of the leaders)
         {desc?}      (ImpairativeDesc)                     see |ImpairativeDesc|
         {extreme?}   ({key:string,desc?:ImpairativeDesc})  Also generate mapping to jump to first and last targets
-        {better_n?}  (boolean)                             Whether to integrate with better-n
+        {better_n?}  (ImpairativeBetterNArgs|boolean)      Whether to integrate with better-n
         {fun}        (fun():Iter)                          Should return a |vim.iter| with all the jump targets in the buffer
 
 
@@ -236,10 +244,10 @@ ImpairativeOperations:jump_in_buf({args})
 ImpairativeOperationsCommandPairArgs      *ImpairativeOperationsCommandPairArgs*
 
     Fields: ~
-        {key}        (string)   The key for the mapping (will be prefixed by one of the leaders)
-        {better_n?}  (boolean)  Whether to integrate with better-n
-        {backward}   (string)   The "backward" command
-        {forward}    (string)   The "forward" command
+        {key}        (string)                          The key for the mapping (will be prefixed by one of the leaders)
+        {better_n?}  (ImpairativeBetterNArgs|boolean)  Whether to integrate with better-n
+        {backward}   (string)                          The "backward" command
+        {forward}    (string)                          The "forward" command
 
 
                                             *ImpairativeOperations:command_pair*

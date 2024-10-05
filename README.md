@@ -18,7 +18,7 @@ SETUP
 
 Install Impairative with your plugin manager of choice. There is no need to call `require'impairative'.setup`, [but it can still be used as an entry point](#configuring-with-setup).
 
-CONTROLING OPTIONS
+CONTROLLING OPTIONS
 ------------------
 
 Impairative can create keymaps for option toggling.
@@ -334,6 +334,33 @@ require'impairative'.operations { ... }
 ```
 
 When the mapping is used, `n` and `N` will be bound to the forward and backward operations respectively. Note that the integration is only available for `function_pair`, `unified_pair`, `jump_in_buf`, and `command_pair` operations since it has no useful interpretation for editing operations. Furthermore, the better-n plugin has to installed to enable this functionality.
+
+#### Remapping `n` and `N` relative to the direction
+
+When the backward mapping is used, `n` and `N` will be flipped in accordance to `?`, `F`, and `T`.  This behaviour can be changed through the `relative_direction` option, either globally during setup or locally during the definition of a pair:
+```lua
+require'impairative'.setup {
+    better_n = {
+        relative_direction = false,
+    },
+}
+require'impairative'.operations { ... }
+:command_pair {
+    key = 'q',
+    backward = 'cprevious',
+    forward = 'cnext',
+    better_n = {
+        relative_direction = false,
+    },
+}
+```
+
+The following table subsumes the behaviour of `n` and `N` after a backward operation depending on `relative_direction`:
+
+after backward operation     | `n`      | `N`
+---------------------------- | -------- | --------
+`relative_direction = true`  | backward | forward
+`relative_direction = false` | forward  | backward
 
 CONFIGURING WITH SETUP
 ----------------------
