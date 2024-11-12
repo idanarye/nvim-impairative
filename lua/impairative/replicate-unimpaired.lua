@@ -5,7 +5,7 @@ return function(args)
         enable = '[o',
         disable = ']o',
         toggle = 'yo',
-        show_message = args.show_toggle_message or false,
+        show_message = (args and args.show_toggle_message) or false,
     }
     :option {
         key = 'b',
