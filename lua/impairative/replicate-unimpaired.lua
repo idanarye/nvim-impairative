@@ -1,10 +1,11 @@
-return function()
+return function(args)
     local impairative = require'impairative'
 
     impairative.toggling {
         enable = '[o',
         disable = ']o',
         toggle = 'yo',
+        show_message = (args and args.show_toggle_message) or false,
     }
     :option {
         key = 'b',
@@ -28,6 +29,7 @@ return function()
                 vim.cmd.diffoff()
             end
         end,
+        messages = {[true] = ':diffthis', [false] = ':diffoff'}
     }
     :option {
         key = 'h',
@@ -80,7 +82,8 @@ return function()
         set = function(value)
             vim.o.cursorline = value
             vim.o.cursorcolumn = value
-        end
+        end,
+        messages = {[true] = ':set cursorline cursorcolumn', [false] = ':set nocursorline nocursorcolumn'},
     }
 
     impairative.operations {

@@ -11,6 +11,7 @@ local M = {}
 ---@field operations? fun(helper: ImpairativeOperations) Define mappings with the supplied |ImpairativeOperations|
 ---@field replicate_unimpaired? boolean Create (almost) the same mappings vim-unimpaired creates
 ---@field better_n? ImpairativeBetterNArgs Settings for better-n
+---@field show_toggle_message? boolean Show message when toggling or not
 local ImpairativeSetupArgs
 
 ---@class ImpairativeBetterNArgs
@@ -27,6 +28,7 @@ function M.setup(args)
             enable = args.enable or '[o',
             disable = args.disable or ']o',
             toggle = args.toggle or 'yo',
+            show_message = args.show_toggle_message or false,
         })
     end
     if args.operations then
@@ -38,7 +40,7 @@ function M.setup(args)
         })
     end
     if args.replicate_unimpaired then
-        require'impairative.replicate-unimpaired'()
+        require'impairative.replicate-unimpaired'(args)
     end
 end
 
@@ -50,6 +52,7 @@ function M.toggling(opts)
         enable = {opts.enable, 'string'},
         disable = {opts.disable, 'string'},
         toggle = {opts.toggle, 'string'},
+        show_message = {opts.show_message, 'boolean'},
     }
     return setmetatable({
         _opts = opts,
