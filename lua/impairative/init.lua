@@ -52,7 +52,7 @@ function M.toggling(opts)
         enable = {opts.enable, 'string'},
         disable = {opts.disable, 'string'},
         toggle = {opts.toggle, 'string'},
-        show_message = {opts.show_message, 'boolean'},
+        show_message = {opts.show_message, 'boolean', true},
     }
     return setmetatable({
         _opts = opts,
