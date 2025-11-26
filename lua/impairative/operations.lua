@@ -73,17 +73,17 @@ local function maybe_with_better_n(args, default_args, callbacks)
         next = callbacks.forward,
     }
     if args.relative_direction then
-        return {
-            backward = forward_wrapper.previous,
-            forward = forward_wrapper.next,
-        }
-    else
         local backward_wrapper = better_n.create {
             previous = callbacks.forward,
             next = callbacks.backward,
         }
         return {
             backward = backward_wrapper.next,
+            forward = forward_wrapper.next,
+        }
+    else
+        return {
+            backward = forward_wrapper.previous,
             forward = forward_wrapper.next,
         }
     end
