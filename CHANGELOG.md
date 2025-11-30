@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/idanarye/nvim-impairative/compare/v0.5.0...v0.6.0) (2025-11-30)
+
+
+### Features
+
+* show message when toggling ([04f7c04](https://github.com/idanarye/nvim-impairative/commit/04f7c043ab5f06c2f46e5e9d501b1ac70e5bd4af))
+
+
+### Bug Fixes
+
+* **better-n:** reverse the `relative_direction` behaviour ([480ccd8](https://github.com/idanarye/nvim-impairative/commit/480ccd87577bcff64f27bad792d26b76611d8e6b))
+* check args is nil or not ([95bb100](https://github.com/idanarye/nvim-impairative/commit/95bb100c74e61b3b25344b6261ca2b4dffc188e2))
+
 ## [0.5.0](https://github.com/idanarye/nvim-impairative/compare/v0.4.0...v0.5.0) (2024-10-05)
 
 
