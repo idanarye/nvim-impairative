@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/idanarye/nvim-impairative/compare/v0.6.0...v0.6.1) (2026-06-21)
+
+
+### Bug Fixes
+
+* change `vim.validate` usage to the new style(Fix [#15](https://github.com/idanarye/nvim-impairative/issues/15)) ([8e33321](https://github.com/idanarye/nvim-impairative/commit/8e33321b435b2eaa889e043a6488b5758a7dd50b))
+
 ## [0.6.0](https://github.com/idanarye/nvim-impairative/compare/v0.5.0...v0.6.0) (2025-11-30)
 
 
