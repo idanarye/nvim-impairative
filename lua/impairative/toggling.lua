@@ -21,14 +21,12 @@ local ImpairativeTogglingManualArgs
 ---Bind toggling mappings by directly specifying the commands for each mapping.
 ---@param args ImpairativeTogglingManualArgs See |ImpairativeTogglingManualArgs|
 function ImpairativeToggling:manual(args)
-    vim.validate {
-        key = {args.key, 'string'},
-        name = {args.name, 'string', true},
-        enable = {args.enable, {'string', 'callable'}},
-        disable = {args.disable, {'string', 'callable'}},
-        toggle = {args.toggle, {'string', 'callable'}},
-        messages = {args.messages, 'table', true},
-    }
+    vim.validate('key' , args.key, 'string')
+    vim.validate('name' , args.name, 'string', true)
+    vim.validate('enable' , args.enable, {'string', 'callable'})
+    vim.validate('disable' , args.disable, {'string', 'callable'})
+    vim.validate('toggle' , args.toggle, {'string', 'callable'})
+    vim.validate('messages' , args.messages, 'table', true)
     for _, operation in ipairs{'enable', 'disable', 'toggle'} do
         local action = args[operation]
         if action then
@@ -75,13 +73,11 @@ local ImpairativeTogglingGetterSetterArgs
 ---@param args ImpairativeTogglingGetterSetterArgs See |ImpairativeTogglingGetterSetterArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:getter_setter(args)
-    vim.validate {
-        key = {args.key, 'string'},
-        name = {args.name, 'string', true},
-        get = {args.get, 'callable'},
-        set = {args.set, 'callable'},
-        messages = {args.messages, 'table', true},
-    }
+    vim.validate('key', args.key, 'string')
+    vim.validate('name', args.name, 'string', true)
+    vim.validate('get', args.get, 'callable')
+    vim.validate('set', args.set, 'callable')
+    vim.validate('messages', args.messages, 'table', true)
     local name = args.name
     local messages = args.messages
     if not messages and name then
@@ -130,14 +126,12 @@ local ImpairativeTogglingFieldArgs
 ---@param args ImpairativeTogglingFieldArgs See |ImpairativeTogglingFieldArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:field(args)
-    vim.validate {
-        key = {args.key, 'string'},
-        name = {args.name, 'string', true},
-        table = {args.table, 'table'},
-        field = {args.field, function(f) return f ~= nil end, 'some value'},
-        values = {args.values, 'table', true},
-        messages = {args.messages, 'table', true},
-    }
+    vim.validate('key', args.key, 'string')
+    vim.validate('name', args.name, 'string', true)
+    vim.validate('table', args.table, 'table')
+    vim.validate('field', args.field, function(f) return f ~= nil end, 'some value')
+    vim.validate('values', args.values, 'table', true)
+    vim.validate('messages', args.messages, 'table', true)
     local name = args.name
     local messages = args.messages
     if not messages and name then
@@ -178,12 +172,10 @@ local ImpairativeTogglingOptionArgs
 ---@param args ImpairativeTogglingOptionArgs See |ImpairativeTogglingOptionArgs|
 ---@return ImpairativeToggling
 function ImpairativeToggling:option(args)
-    vim.validate {
-        key = {args.key, 'string'},
-        option = {args.option, 'string'},
-        values = {args.values, 'table', true},
-        messages = {args.messages, 'table', true},
-    }
+    vim.validate('key', args.key, 'string')
+    vim.validate('option', args.option, 'string')
+    vim.validate('values', args.values, 'table', true)
+    vim.validate('messages', args.messages, 'table', true)
     local messages = args.messages
     if not messages then
         if args.values then
